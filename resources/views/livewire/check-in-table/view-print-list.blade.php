@@ -210,7 +210,7 @@
                     <div class="grid grid-rows-4 grid-cols-2 grid-flow-col gap-[2px]">
                         @forelse ($incidents as $incident)
                             <div class="">
-                                <div>&nbsp; Incident:&nbsp; {{ $incident->incident_description }}</div>
+                                <div>&nbsp; Incident:&nbsp; {{ $incident }}</div>
                             </div>
                         @empty
                             <div class="ml-2 text-sm">No records</div>

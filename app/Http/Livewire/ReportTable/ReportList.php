@@ -95,6 +95,19 @@ class ReportList extends Component
     public $significanIncident;
     public $getodate;
     public $getPosition;
+
+    public $chk_incident_case_reported;
+    public $chk_absconding_patient_case_reported;
+    public $chk_doa_patient_case_reported;
+    public $chk_other_security_function;
+    public $chk_trauma_patient_case_reported;
+
+    public $incident_case_reported;
+    public $absconding_patient_case_reported;
+    public $doa_patient_case_reported;
+    public $other_security_function;
+    public $trauma_patient_case_reported;
+
     // public function updatedSearchPatient()
     // {
     //     $this->get_patient = HospitalHerlog::where('hpercode', $this->search_patient)->where(DB::raw('CONVERT(date, erdate)'), $this->report_date)->with('patient')->latest('erdate')->first();
@@ -129,9 +142,10 @@ class ReportList extends Component
     public function mount()
     {
         $date = date('Y-m-d H:i:s');
-        $date = date('2023-12-20 17:00:00');
+        $date = date('2023-12-22 17:00:00');
         $this->report_date = $date;
-        $this->getPosition = Auth::user()->employee->position_id;
+        //$this->getPosition = Auth::user()->employee->position_id;
+        $this->getPosition = 18;
     }
     public function render()
     {
@@ -174,20 +188,23 @@ class ReportList extends Component
 
     public function save_incident() // Save incident reports
     {
-        $this->validate([
-            'incident_description' => ['required'],
+        $chkIncident = ShoIncident::where('report_date', $this->get_sho_detail->report_date)->where('sho_id', $this->get_sho_detail->id)->first();
+        if ($chkIncident) {
+            $this->alert('warning', 'Already Created!');
+        } else {
 
-        ]);
-
-        ShoIncident::create([
-            'incident_description' => $this->incident_description,
-            'sho_id' => $this->get_sho_detail->id,
-            'report_date' => $this->report_date,
-        ]);
-        //$this->dispatchBrowserEvent('try');
-        $this->alert('success', 'Successfully Added!');
-        $this->reset('search_patient', 'patient', 'get_option', 'selected_patient_operation', 'get_patients', 'selected_patient', 'incident_description', 'getPosition');
-        //return redirect()->route('reports');
+            ShoIncident::create([
+                'incident_case_reported' => $this->incident_case_reported,
+                'absconding_patient_case_reported' => $this->absconding_patient_case_reported,
+                'doa_patient_case_reported' => $this->doa_patient_case_reported,
+                'other_security_function' => $this->other_security_function,
+                'trauma_patient_case_reported' => $this->trauma_patient_case_reported,
+                'sho_id' => $this->get_sho_detail->id,
+                'report_date' => $this->report_date,
+            ]);
+            $this->alert('success', 'Successfully Added!');
+            $this->reset('search_patient', 'patient', 'get_option', 'selected_patient_operation', 'get_patients', 'selected_patient', 'incident_description', 'getPosition');
+        }
     }
 
     public function get_patient_id($id) //
@@ -260,7 +277,8 @@ class ReportList extends Component
     }
     public function reset_page()
     {
-        $this->reset('search_patient', 'patient', 'get_option', 'selected_patient_operation', 'selected_patient', 'getIncidentDescription');
+        $this->resetExcept('report_date', 'getPosition');
+        //$this->reset('search_patient', 'patient', 'get_option', 'selected_patient_operation', 'selected_patient', 'getIncidentDescription');
         $this->selected_patient_operation = null;
         $this->selected_patient = null;
         $this->search_patient = null;
@@ -342,10 +360,15 @@ class ReportList extends Component
         $this->selected_patient = $this->get_patient;
         //dd($gpatientId);
     }
-    public function editIncident($id, $gincidentDescription)
+    public function editIncident($id, $gincident_case_reported, $gabsconding_patient_case_reported, $gdoa_patient_case_reported, $gother_security_function, $gtrauma_patient_case_reported)
     {
         $this->getIncidentId = $id;
-        $this->getIncidentDescription = $gincidentDescription;
+        $this->incident_case_reported = $gincident_case_reported;
+        $this->absconding_patient_case_reported = $gabsconding_patient_case_reported;
+        //dd($gabsconding_patient_case_reported);
+        $this->doa_patient_case_reported = $gdoa_patient_case_reported;
+        $this->other_security_function = $gother_security_function;
+        $this->trauma_patient_case_reported = $gtrauma_patient_case_reported;
     }
     public function upadateOperation()
     {
@@ -375,11 +398,20 @@ class ReportList extends Component
     public function updateIncident()
     {
         $this->validate([
-            'getIncidentDescription' => ['required']
+            'incident_case_reported' => ['required'],
+            'absconding_patient_case_reported' => ['required'],
+            'doa_patient_case_reported' => ['required'],
+            'other_security_function' => ['required'],
+            'trauma_patient_case_reported' => ['required'],
         ]);
         //dd($this->getIncidentDescription);
         $updateIncident = ShoIncident::where('id', $this->getIncidentId)->first();
-        $updateIncident->incident_description = $this->getIncidentDescription;
+
+        $updateIncident->incident_case_reported = $this->incident_case_reported;
+        $updateIncident->absconding_patient_case_reported = $this->absconding_patient_case_reported;
+        $updateIncident->doa_patient_case_reported = $this->doa_patient_case_reported;
+        $updateIncident->other_security_function = $this->other_security_function;
+        $updateIncident->trauma_patient_case_reported = $this->trauma_patient_case_reported;
         $updateIncident->save();
         $this->alert('success', 'Updated');
         $this->resetExcept('report_date', 'getPosition');

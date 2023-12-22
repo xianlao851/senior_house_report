@@ -291,6 +291,7 @@ class DashPage extends Component
 
         //Start, column chart for patient count on operations group by department
         $columnChartModel = (new ColumnChartModel())
+            ->withoutLegend()
             ->setAnimated(true);
         //->setTitle('Patient Per Department')
         //->withDataLabels();

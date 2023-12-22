@@ -65,7 +65,7 @@ class CheckIn extends Component
     public $getReportDate;
     public $getDiffHours;
     public $inc_depts = [13, 15, 12, 8, 14, 87, 9, 7, 65];
-    public $position = [19, 18, 57, 58, 59];
+    public $position = [19, 18, 57, 58, 59, 22];
     public $search_doctor;
     public $get_doctor;
     public $selected_doctor;
@@ -129,11 +129,12 @@ class CheckIn extends Component
     public function mount()
     {
         $date = date('Y-m-d H:i:s'); //take current date
-        $date = date('2023-12-20 17:00:00');
+        $date = date('2023-12-22 17:00:00');
         $this->report_date = $date;
         //$this->getHospitalIds = Hospital::orderBy('hospital_name', 'asc')->get();
         $this->senior_house_officer = sprintf('%06d', Auth::user()->employee->emp_id); // get user emp_id, details for sho in charge
-        $this->getPosition = Auth::user()->employee->position_id;
+        //$this->getPosition = Auth::user()->employee->position_id;
+        $this->getPosition = 18;
     }
 
     public function render()
@@ -425,7 +426,6 @@ class CheckIn extends Component
     {
         $this->getId = $id;
         $moduty = ShoMoDuty::where('id', $this->getId)->first();
-        //dd($this->getId);
         $moduty->delete();
         $this->alert('success', 'Deleted');
         $this->resetExcept('report_date', 'current_detail', 'trasnferfrom', 'trasnsferTo', 'getHospitalIds', 'getPosition');
@@ -438,7 +438,7 @@ class CheckIn extends Component
         $this->alert('success', 'Deleted');
         $this->resetExcept('report_date', 'current_detail', 'trasnferfrom', 'trasnsferTo', 'getHospitalIds', 'getPosition');
     }
-    //wire:click="editTransferFrom('{{ $transfer->id }}','{{ $transfer->diagnosis }}','{{ $transfer->facility }}','{{ $transfer->reason }}','{{ $transfer->patient_id }}','{{ $transfer->sho_id }}')">Edit</label>
+
     public function editTransferFrom($transferId, $cDiagnosis, $cFacility, $cReason, $cpatientId, $cShoid)
     {
         $this->patientId = $cpatientId;
@@ -475,7 +475,6 @@ class CheckIn extends Component
     }
     public function updateTranssferFrom()
     {
-
         $this->validate([
             'getDiagnosis' => ['required'],
             'getReason' => ['required'],
@@ -498,7 +497,6 @@ class CheckIn extends Component
             'getReason' => ['required'],
             'getFacility' => ['required']
         ]);
-        // dd($this->patientId);
         $epdateTransferTo = ShoTransferTo::where('id', $this->getTransferId)->first();
         $epdateTransferTo->patient_id = $this->patientId;
         $epdateTransferTo->sho_id = $this->getShoId;
@@ -518,7 +516,6 @@ class CheckIn extends Component
         $this->get_option = null;
         $this->search_doctor = null;
         $this->get_doctors = null;
-        //return redirect()->route('checkin');
     }
     public function deleteComfirmedTransferFrom($id)
     {
@@ -538,7 +535,7 @@ class CheckIn extends Component
     }
     public function permission()
     {
-        dd('here');
+        //dd('here');
         $this->dispatchBrowserEvent('warning');
     }
 }
