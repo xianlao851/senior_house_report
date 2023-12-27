@@ -15,11 +15,11 @@
                     <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')" class="text-white bg">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link href="{{ route('checkin') }}" :active="request()->routeIs('checkin')" class="text-white">
+                    <x-nav-link href="{{ route('doctors') }}" :active="request()->routeIs('doctors')" class="text-white">
                         {{ __('Doctors') }}
                     </x-nav-link>
 
-                    <x-nav-link href="{{ route('reports') }}" :active="request()->routeIs('reports')" class="text-white">
+                    <x-nav-link href="{{ route('operations') }}" :active="request()->routeIs('operations')" class="text-white">
                         {{ __('Operation') }}
                     </x-nav-link>
 

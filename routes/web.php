@@ -38,8 +38,8 @@ Route::middleware([
         return view('dashboard');
     })->name('dashboard');
 
-    Route::get('/check-in', CheckIn::class)->name('checkin');
-    Route::get('/reports', ReportList::class)->name('reports');
+    Route::get('/doctors', CheckIn::class)->name('doctors');
+    Route::get('/operations', ReportList::class)->name('operations');
     Route::get('/addpatient', AddPatientTable::class)->name('addpatient');
     Route::get('/shoreports', CheckInTableList::class)->name('shoreports');
     Route::get('/shoreports/view/{id}', ViewCheckInTableList::class)->name('viewshoreports');
