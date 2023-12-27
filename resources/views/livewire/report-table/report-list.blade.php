@@ -79,7 +79,7 @@
                 @endif
             </div>
             <div class="mt-2">
-                <div class="border-b-2 border-l-2 border-r-2 h-52 ">
+                <div class="border-b-2 border-l-2 border-r-2 h-[200px] ">
                     <table class="table text-sm border table-fixed border-stone-500 table-sm">
                         <thead class="text-black bg-gray-200">
                             <th class="border"> NAME OF PATIENT</th>
@@ -194,7 +194,7 @@
                     </div>
                 </div>{{-- Incidents --}}
                 {{-- Significant events --}}
-                <div class="flex flex-col h-40 my-4 border-b-2 border-l-2 border-r-2">
+                <div class="flex flex-col my-4 border-b-2 border-l-2 border-r-2 h-44">
                     <div class="h-6 text-sm text-black bg-gray-200">
                         <span class="ml-2">SIGNIFICANT EVENTS</span>
                     </div>
@@ -403,12 +403,6 @@
                                 class="input input-bordered join-item w-[450px] focus:border-green-700 focus:ring-green-700"
                                 type="text" wire:model.lazy="search_patient" placeholder="Search" />
                         </div>
-                        {{-- <select class="select select-bordered join-item" wire:model='get_option'>
-                                <option>Filter</option>
-                                <option value="dbo.hperson.hpercode">Hospital No.</option>
-                                <option value="dbo.hperson.patlast">Last name</option>
-                                <option value="dbo.hperson.patfirst">First name</option>
-                            </select> --}}
                         <div class="indicator">
                             <button class="w-20 text-white bg-green-700 btn join-item">Search </button>
                             {{-- wire:click='searchpatient'>Search</button> --}}
@@ -425,9 +419,11 @@
                                     <li class="w-full mt-2 rounded-sm shadow-lg cursor-pointer hover:bg-gray-300 bg-slate-200"
                                         wire:click="selectPatient({{ $pat->hpercode }})">
                                         {{ $pat->patlast }}, {{ $pat->patfirst }}
-                                    </li>
-                                @empty
-                                    <div class="mx-1">No records!</div>
+                                        @if ($pat->patmiddle != null or $pat->patmiddle == '')
+                                            {{ $pat->patmiddle }}
+                                        @endif
+                                    @empty
+                                        <div class="mx-1">No records!</div>
                                 @endforelse
                             @else
                         </ul>
@@ -502,6 +498,9 @@
                                     <li class="w-full mt-2 rounded-sm shadow-lg cursor-pointer hover:bg-gray-300 bg-slate-200"
                                         wire:click="selectPatient({{ $pat->hpercode }})">
                                         {{ $pat->patlast }}, {{ $pat->patfirst }}
+                                        @if ($pat->patmiddle != null or $pat->patmiddle == '')
+                                            {{ $pat->patmiddle }}
+                                        @endif
                                     </li>
                                 @empty
                                     <div class="mx-1">No records!</div>

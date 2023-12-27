@@ -94,25 +94,29 @@ class CheckIn extends Component
     public $dats;
     public function updatedSearchPatient()
     {
+        //$this->search_patient = '1010454';
         $dat = new DateTime($this->recordDate);
         $dat->modify('+1 day');
         $todate = $dat->format('Y-m-d');
         $this->getodate = $todate;
         $this->recordDate = date('Y-m-d', strtotime($this->recordDate));
 
-        $columns = ['dbo.hperson.hpercode', 'dbo.hperson.patlast', 'dbo.hperson.patfirst'];
+        $columns = ['dbo.hperson.hpercode', 'dbo.hperson.patlast', 'dbo.hperson.patfirst', 'dbo.hperson.patmiddle'];
 
         $this->get_patients = DB::connection('hospital')->table('dbo.hperson')
-            ->join('dbo.herlog', 'dbo.hperson.hpercode', '=', 'dbo.herlog.hpercode')  //joining the
+            ->join('dbo.herlog', 'dbo.hperson.hpercode', '=', 'dbo.herlog.hpercode')
             ->join('dbo.hencdiag', 'dbo.herlog.enccode', '=', 'dbo.hencdiag.enccode')
-            ->select('dbo.hperson.patlast', 'dbo.hperson.patfirst', 'dbo.hperson.hpercode', 'dbo.hencdiag.enccode', 'dbo.hencdiag.primediag')
+            ->select('dbo.hperson.patlast', 'dbo.hperson.patfirst', 'dbo.hperson.patmiddle', 'dbo.hperson.hpercode')
             ->where(function ($query) use ($columns) {
                 foreach ($columns as $column) {
-                    $query->orWhere($column, $this->search_patient)
-                        ->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $this->getodate  . ' 07:59:59'])
-                        ->where('dbo.hencdiag.primediag', 'Y');
+                    $query->orWhere($column, 'like', '%' . $this->search_patient . '%')
+                        ->whereNotNull('dbo.herlog.tscode')
+                        ->whereNotNull('dbo.hencdiag.diagtext')
+                        ->where('dbo.hencdiag.primediag', 'Y')
+                        ->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $this->getodate  . ' 07:59:59']);
                 }
             })->get();
+        //dd($this->get_patients);
     }
     public function updatedSearchDoctor()
     {
@@ -120,7 +124,7 @@ class CheckIn extends Component
 
         $this->get_doctors = HrisEmployee::select('emp_id', 'lastname', 'firstname')->where(function ($query) use ($columns) {
             foreach ($columns as $column) {
-                $query->orWhere($column, $this->search_doctor)
+                $query->orWhere($column, 'LIKE', '%' . $this->search_doctor . '%')
                     ->whereIn('department_id', $this->inc_depts)
                     ->whereIn('position_id', ['18', '59'])
                     ->with('user');
@@ -157,9 +161,10 @@ class CheckIn extends Component
         $this->recordDate = date('Y-m-d', strtotime($detail->report_date));
         $this->currentDate = date('Y-m-d', strtotime($this->report_date));
         $this->getTime = $cur_time;
+
         $this->getRecordDate = $this->recordDate;
 
-
+        $this->recordDate = date('Y-m-d', strtotime('2023-12-26'));
         return view('livewire.pages.check-in', [
             'departments' =>  $departments ?? null,
             'detail' =>   $detail ?? null,
@@ -281,14 +286,19 @@ class CheckIn extends Component
     {
 
         $this->patientFromId = sprintf('%06d', $id);
-        if ($this->recordDate == $this->currentDate) {
-            $this->get_patient = HospitalHerlog::where('hpercode', $this->patientFromId)->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $this->currentDate  . ' 23:59:59'])->with('patient')->latest('erdate')->first();
-        }
-        if ($this->recordDate < $this->currentDate) {
-            $getDate = date('Y-m-d', strtotime(Carbon::yesterday()));
-            $this->get_patient = HospitalHerlog::where('hpercode', $this->patientFromId)->whereBetween(DB::raw('erdate'), [$getDate  . ' 17:00:00', $this->currentDate  . ' 7:59:59'])->with('patient')->latest('erdate')->first();
-        }
+        //$this->recordDate = date('Y-m-d', strtotime($this->recordDate));
+        $dat = new DateTime($this->recordDate);
+        $dat->modify('+1 day');
+        $todate = $dat->format('Y-m-d');
+        $this->getodate = $todate;
+
+        $this->get_patient = HospitalHerlog::where('hpercode', $this->patientFromId)
+            ->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $this->getodate  . ' 07:59:59'])
+            ->whereNotNull('tscode')
+            ->with('patient')->latest('erdate')->first();
+
         $this->selected_patient = $this->get_patient;
+
         $this->getDiag = $this->get_patient->diagnosis->first();
         if ($this->getDiag) {
             $this->diagnosis = $this->getDiag->diagtext;
@@ -313,9 +323,12 @@ class CheckIn extends Component
             'diagnosis' => ['required'],
 
         ]);
-        $getTransferFrom = shoTransferFrom::where('patient_id', $this->patientFromId)->first();
+        $getTransferFrom = shoTransferFrom::where('patient_id', $this->patientFromId)->where('report_date', $this->getShoDetail->report_date)->first();
+        //$getTransferTo = shoTransferTo::where('patient_id', $this->patientFromId)->where('report_date', $this->getShoDetail->report_date)->first();
+
         if ($getTransferFrom) // check if the the patient is already transfered
         {
+            $this->resetExcept('report_date', 'current_detail', 'trasnferfrom', 'trasnsferTo', 'getHospitalIds', 'get_option', 'search_patient', 'getPosition');
             $this->alert('warning', 'Patient Already Transfered!');
         } else {
             ShoTransferFrom::create([
@@ -335,16 +348,17 @@ class CheckIn extends Component
     public function get_patientIdTo($id) // For searching patients
     {
         $this->patienToId = sprintf('%06d', $id);
-        if ($this->recordDate == $this->currentDate) {
-            $this->get_patient = HospitalHerlog::where('hpercode', $this->patienToId)->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $this->currentDate  . ' 23:59:59'])->with('patient')->latest('erdate')->first();
-        }
-        if ($this->recordDate < $this->currentDate) {
-            if ($this->getTime < 8) {
-                $getDate = date('Y-m-d', strtotime(Carbon::yesterday()));
-                $this->get_patient = HospitalHerlog::where('hpercode', $this->patienToId)->whereBetween(DB::raw('erdate'), [$getDate  . ' 17:00:00', $this->currentDate  . ' 7:59:59'])->with('patient')->latest('erdate')->first();
-            }
-        }
-        $this->patienToId = sprintf('%06d', $id);
+
+        $dat = new DateTime($this->recordDate);
+        $dat->modify('+1 day');
+        $todate = $dat->format('Y-m-d');
+        $this->getodate = $todate;
+
+        $this->get_patient = HospitalHerlog::where('hpercode', $this->patienToId)
+            ->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $this->getodate  . ' 07:59:59'])
+            ->whereNotNull('tscode')
+            ->with('patient')->latest('erdate')->first();
+
         $this->selected_patient = $this->get_patient;
         $this->getDiag = $this->get_patient->diagnosis->first();
         if ($this->getDiag) {
@@ -369,10 +383,13 @@ class CheckIn extends Component
             'diagnosis' => ['required'],
             'reason' => ['required'],
         ]);
-        $getTransferTo = shoTransferTo::where('patient_id', $this->patienToId)->first();
+        $getTransferTo = shoTransferTo::where('patient_id', $this->patienToId)->where('report_date', $this->getShoDetail->report_date)->first();
+
+
         if ($getTransferTo) // check if the the patient is already transfered
         {
-            $this->alert('warning', 'Patient Already Transfered to!');
+            $this->resetExcept('report_date', 'current_detail', 'trasnferfrom', 'trasnsferTo', 'getHospitalIds', 'get_option', 'search_patient', 'getPosition');
+            $this->alert('warning', 'Patient Already Transfered');
         } else {
             shoTransferTo::create([
                 'patient_id' => sprintf('%06d', $this->patienToId),
@@ -383,7 +400,6 @@ class CheckIn extends Component
                 'sho_id' => $this->current_detail->id,
             ]);
             $this->alert('success', 'Patient Transfered!');
-            //return redirect()->route('checkin');
             $this->resetExcept('report_date', 'current_detail', 'trasnferfrom', 'trasnsferTo', 'getHospitalIds', 'getPosition');
         }
     }
@@ -442,7 +458,7 @@ class CheckIn extends Component
         $this->resetExcept('report_date', 'current_detail', 'trasnferfrom', 'trasnsferTo', 'getHospitalIds', 'getPosition');
     }
 
-    public function editTransferFrom($transferId, $cDiagnosis, $cFacility, $cReason, $cpatientId, $cShoid)
+    public function editTransferFromBack($transferId, $cDiagnosis, $cFacility, $cReason, $cpatientId, $cShoid)
     {
         $this->patientId = $cpatientId;
         $this->getDiagnosis = $cDiagnosis;
@@ -455,8 +471,7 @@ class CheckIn extends Component
         $dat->modify('+1 day');
         $todate = $dat->format('Y-m-d');
         $this->getodate = $todate;
-        $this->recordDate = date('Y-m-d', strtotime($this->recordDate));
-
+        //$this->recordDate = date('Y-m-d', strtotime($this->recordDate));
         $this->selected_patient = HospitalHerlog::where('hpercode', $this->patientId)->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $this->getodate  . ' 23:59:59'])->with('patient')->latest('erdate')->first();
     }
     public function editTransferTo($transferId, $cDiagnosis, $cFacility, $cReason, $cpatientId, $cShoid)
@@ -472,8 +487,7 @@ class CheckIn extends Component
         $dat->modify('+1 day');
         $todate = $dat->format('Y-m-d');
         $this->getodate = $todate;
-        $this->recordDate = date('Y-m-d', strtotime($this->recordDate));
-
+        //$this->recordDate = date('Y-m-d', strtotime($this->recordDate));
         $this->selected_patient = HospitalHerlog::where('hpercode', $this->patientId)->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $this->getodate  . ' 23:59:59'])->with('patient')->latest('erdate')->first();
     }
     public function updateTranssferFrom()

@@ -101,7 +101,7 @@
                                             {{ $transfer->getpatient->getAddress->first()->city->cityName() }},
                                             Brgy.
                                             {{ $transfer->getpatient->getAddress->first()->barangay->barangayName() }}
-                                            {{ $transfer->getpatient->fataddr }}
+                                            {{-- {{ $transfer->getpatient->fataddr }} --}}
                                         </td>
                                         <td class="font-normal border">{{ $transfer->diagnosis }}</td>
                                         <td class="font-normal border">{{ $transfer->facility }}
@@ -146,8 +146,7 @@
                                                 {{ $to->getpatient->getAddress->first()->city->cityName() }},
                                                 Brgy.
                                                 {{ $to->getpatient->getAddress->first()->barangay->barangayName() }}
-
-                                                {{ $to->getpatient->fataddr }}
+                                                {{-- {{ $to->getpatient->fataddr }} --}}
                                             </td>
                                             <td class="border">{{ $to->diagnosis }}</td>
                                             <td class="border">{{ $to->facility }}</td>
@@ -475,7 +474,7 @@
                                                         {{ $transfer->getpatient->getAddress->first()->city->cityName() }},
                                                         Brgy.
                                                         {{ $transfer->getpatient->getAddress->first()->barangay->barangayName() }}
-                                                        {{ $transfer->getpatient->fataddr }}
+                                                        {{-- {{ $transfer->getpatient->fataddr }} --}}
                                                     </td>
                                                     <td class="font-normal border">{{ $transfer->diagnosis }}</td>
                                                     <td class="font-normal border">{{ $transfer->facility }}

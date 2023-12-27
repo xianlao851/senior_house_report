@@ -119,22 +119,26 @@ class ReportList extends Component
     // }
     public function updatedSearchPatient()
     {
+        //$this->recordDate = date('Y-m-d', strtotime($this->recordDate));
         $dat = new DateTime($this->recordDate);
         $dat->modify('+1 day');
         $todate = $dat->format('Y-m-d');
         $this->getodate = $todate;
-        $this->recordDate = date('Y-m-d', strtotime($this->recordDate));
+
         // select('hpercode', 'patlast', 'patfirst')->
         $columns = ['dbo.hperson.hpercode', 'dbo.hperson.patlast', 'dbo.hperson.patfirst'];
 
         $this->get_patients = DB::connection('hospital')->table('dbo.hperson')
             ->join('dbo.herlog', 'dbo.hperson.hpercode', '=', 'dbo.herlog.hpercode')  //joining the
             ->join('dbo.hencdiag', 'dbo.herlog.enccode', '=', 'dbo.hencdiag.enccode')
-            ->select('dbo.hperson.patlast', 'dbo.hperson.patfirst', 'dbo.hperson.hpercode', 'dbo.hencdiag.enccode', 'dbo.hencdiag.primediag')
+            ->select('dbo.hperson.patlast', 'dbo.hperson.patfirst', 'dbo.hperson.hpercode', 'dbo.hencdiag.enccode', 'dbo.hperson.patmiddle')
             ->where(function ($query) use ($columns) {
                 foreach ($columns as $column) {
-                    $query->orWhere($column, $this->search_patient)
+                    $query->orWhere($column, 'like', '%' . $this->search_patient . '%')
                         ->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $this->getodate  . ' 07:59:59'])
+                        ->whereNotNull('dbo.herlog.tscode')
+                        ->whereNotNull('dbo.hencdiag.diagtext')
+                        ->latest('dbo.hencdiag.diagtext')
                         ->where('dbo.hencdiag.primediag', 'Y');
                 }
             })->get();
@@ -160,17 +164,18 @@ class ReportList extends Component
         $dat->modify('+1 day');
         $todate = $dat->format('Y-m-d');
         $this->recordDate = date('Y-m-d', strtotime($this->get_sho_detail->report_date));
-
         $this->getCount = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate . ' 17:00:00', $todate  . ' 07:59:59'])->count();
-        $operations = Operation::where('sho_id', $this->get_sho_detail->id)->paginate(6, ['*'], 'operation');
+        $operations = Operation::where('sho_id', $this->get_sho_detail->id)->paginate(4, ['*'], 'operation');
         //$departments = Department::where('division_id', $this->getdivision)->get();
         $getdepartments = HospitalTypesEr::whereIn('tscode', $this->dept_code)->get();
         $incidents = ShoIncident::where('sho_id', $this->get_sho_detail->id)->get();
-        $significanIncidents = ShoSignificantEvent::where('sho_id', $this->get_sho_detail->id)->paginate(7, ['*'], 'significanIncident');
+        $significanIncidents = ShoSignificantEvent::where('sho_id', $this->get_sho_detail->id)->paginate(4, ['*'], 'significanIncident');
 
         $this->recordDate = date('Y-m-d', strtotime($this->get_sho_detail->report_date));
         $this->currentDate = date('Y-m-d', strtotime($this->report_date));
         $this->getTime = $cur_time;
+
+        $this->recordDate = date('Y-m-d', strtotime('2023-12-26'));
 
         return view('livewire.report-table.report-list', [
             // 'patients'=> $patients,
@@ -237,20 +242,22 @@ class ReportList extends Component
         ]);
         //$this->dispatchBrowserEvent('pop');
         $this->alert('success', 'Successfully Added!');
-        $this->reset('search_patient', 'patient', 'get_option', 'selected_patient_operation', 'get_patients', 'selected_patient', 'getPosition');
+        $this->resetExcept('report_date', 'getPosition');
         //return redirect()->route('reports');
     }
 
     public function selectPatient($id)
     {
         $this->patient_id = sprintf('%06d', $id);
-        if ($this->recordDate == $this->currentDate) {
-            $this->get_patient = HospitalHerlog::where('hpercode', $this->patient_id)->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $this->currentDate  . ' 23:59:59'])->with('patient')->latest('erdate')->first();
-        }
-        if ($this->recordDate < $this->currentDate) {
-            $getDate = date('Y-m-d', strtotime(Carbon::yesterday()));
-            $this->get_patient = HospitalHerlog::where('hpercode', $this->patient_id)->whereBetween(DB::raw('erdate'), [$getDate  . ' 17:00:00', $this->currentDate  . ' 7:59:59'])->with('patient')->latest('erdate')->first();
-        }
+
+        $dat = new DateTime($this->recordDate);
+        $dat->modify('+1 day');
+        $todate = $dat->format('Y-m-d');
+        $this->getodate = $todate;
+
+        $this->get_patient = HospitalHerlog::where('hpercode', $this->patient_id)
+            ->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $this->getodate  . ' 07:59:59'])
+            ->whereNotNull('tscode')->with('patient')->latest('erdate')->first();
 
         $this->selected_patient = $this->get_patient;
         $this->department = $this->get_patient->tscode;
@@ -331,13 +338,14 @@ class ReportList extends Component
 
         $this->getDept = $patientDept;
         $this->getShoId = $getShoId;
-        if ($this->recordDate == $this->currentDate) {
-            $this->get_patient = HospitalHerlog::where('hpercode', $this->patient_id)->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $this->currentDate  . ' 23:59:59'])->with('patient')->latest('erdate')->first();
-        }
-        if ($this->recordDate < $this->currentDate) {
-            $getDate = date('Y-m-d', strtotime(Carbon::yesterday()));
-            $this->get_patient = HospitalHerlog::where('hpercode', $this->patient_id)->whereBetween(DB::raw('erdate'), [$getDate  . ' 17:00:00', $this->currentDate  . ' 7:59:59'])->with('patient')->latest('erdate')->first();
-        }
+
+        $dat = new DateTime($this->recordDate);
+        $dat->modify('+1 day');
+        $todate = $dat->format('Y-m-d');
+        $this->getodate = $todate;
+
+        $this->get_patient = HospitalHerlog::where('hpercode', $this->patient_id)->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $this->getodate  . ' 07:59:59'])->with('patient')->latest('erdate')->first();
+
         $this->selected_patient = $this->get_patient;
     }
     //{{ $significanIncident->id }}','{{ $significanIncident->nature_of_incident }}','{{ $significanIncident->place_of_incident }}','{{ $significanIncident->time_of_incident }}','{{ $significanIncident->date_of_incident }}')
@@ -351,13 +359,13 @@ class ReportList extends Component
         $this->getsignifincantIncidentId = $significanIncidentId;
         $this->patient_id = $gpatientId;
 
-        if ($this->recordDate == $this->currentDate) {
-            $this->get_patient = HospitalHerlog::where('hpercode', $this->patient_id)->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $this->currentDate  . ' 23:59:59'])->with('patient')->latest('erdate')->first();
-        }
-        if ($this->recordDate < $this->currentDate) {
-            $getDate = date('Y-m-d', strtotime(Carbon::yesterday()));
-            $this->get_patient = HospitalHerlog::where('hpercode', $this->patient_id)->whereBetween(DB::raw('erdate'), [$getDate  . ' 17:00:00', $this->currentDate  . ' 7:59:59'])->with('patient')->latest('erdate')->first();
-        }
+        $dat = new DateTime($this->recordDate);
+        $dat->modify('+1 day');
+        $todate = $dat->format('Y-m-d');
+        $this->getodate = $todate;
+
+        $this->get_patient = HospitalHerlog::where('hpercode', $this->patient_id)->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $this->getodate  . ' 07:59:59'])->with('patient')->latest('erdate')->first();
+
         $this->selected_patient = $this->get_patient;
         //dd($gpatientId);
     }

@@ -59,7 +59,7 @@ class SummaryPage extends Component
     public function mount()
     {
         $date = date('Y-m-d H:i:s'); //take current date
-        //$date = date('2023-12-05 07:00:00');
+        //$date = date('2023-12-26 07:00:00');
         $this->report_date = $date;
     }
 
@@ -68,7 +68,7 @@ class SummaryPage extends Component
 
         $this->get_sho_detail = ShoDetail::all()->last();
         $cur_time = Carbon::parse(now())->format('H');
-        //$cur_time = 17;
+        $cur_time = 17;
         $this->getId = $this->get_sho_detail->id;
         $this->get_date = $this->get_sho_detail->report_date;
         $departments = Department::where('division_id', $this->getdivision)->get();
@@ -82,7 +82,7 @@ class SummaryPage extends Component
         $dat->modify('+1 day');
         $todate = $dat->format('Y-m-d');
         $this->recordDate = date('Y-m-d', strtotime($this->get_sho_detail->report_date));
-
+        //$this->recordDate = date('Y-m-d', strtotime('2023-12-26'));
         $this->countmed = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'MED')->count();
         $this->ent = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'ENT')->count();
         $this->countsurgery = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'SURG')->count();

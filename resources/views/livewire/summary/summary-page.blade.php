@@ -159,7 +159,7 @@
                                                 {{ $transfer->getpatient->getAddress->first()->city->cityName() }},
                                                 Brgy.
                                                 {{ $transfer->getpatient->getAddress->first()->barangay->barangayName() }}
-                                                {{ $transfer->getpatient->fataddr }}
+                                                {{-- {{ $transfer->getpatient->fataddr }} --}}
                                             </td>
                                             <td class="font-normal border">{{ $transfer->diagnosis }}</td>
                                             <td class="font-normal border">{{ $transfer->facility }}
