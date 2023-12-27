@@ -207,11 +207,42 @@
                         <span>
                             <label> INCIDENT</label>
                     </div>
-                    <div class="grid grid-rows-4 grid-cols-2 grid-flow-col gap-[2px]">
+                    <div class="">
                         @forelse ($incidents as $incident)
-                            <div class="">
-                                <div>&nbsp; Incident:&nbsp; {{ $incident }}</div>
-                            </div>
+                            @foreach ($incidents as $incident)
+                                <div class="grid mt-1 ml-2">
+                                    @if ($incident->incident_case_reported != null)
+                                        <div>{{ $incident->incident_case_reported }} &nbsp; INCIDENT CASE
+                                            REPORTED</div>
+                                    @else
+                                        <div>NO INCIDENT CASE REPORTED</div>
+                                    @endif
+                                    @if ($incident->absconding_patient_case_reported != null)
+                                        <div>{{ $incident->absconding_patient_case_reported }} &nbsp; ABSCONDING
+                                            PATIENT CASE REPORTED</div>
+                                    @else
+                                        <div>NO ABSCONDING PATIENT CASE REPORTED</div>
+                                    @endif
+                                    @if ($incident->doa_patient_case_reported != null)
+                                        <div> {{ $incident->doa_patient_case_reported }} &nbsp; DOA PATIENT CASE
+                                            REPORTED</div>
+                                    @else
+                                        <div>NO DOA PATIENT CASE REPORTED</div>
+                                    @endif
+                                    @if ($incident->other_security_function != null)
+                                        <div>{{ $incident->other_security_function }}&nbsp; OTHER SECURITY
+                                            FUNCTION</div>
+                                    @else
+                                        <div>NO OTHER SECURITY FUNCTION</div>
+                                    @endif
+                                    @if ($incident->trauma_patient_case_reported != null)
+                                        <div>{{ $incident->trauma_patient_case_reported }}&nbsp; TRAUMA PATIENT
+                                            CASE REPORTED</div>
+                                    @else
+                                        <div>NO TRAUMA PATIENT CASE REPORTED</div>
+                                    @endif
+                                </div>
+                            @endforeach
                         @empty
                             <div class="ml-2 text-sm">No records</div>
                         @endforelse

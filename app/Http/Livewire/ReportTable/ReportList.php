@@ -142,7 +142,7 @@ class ReportList extends Component
     public function mount()
     {
         $date = date('Y-m-d H:i:s');
-        $date = date('2023-12-22 17:00:00');
+        $date = date('2023-12-27 17:00:00');
         $this->report_date = $date;
         //$this->getPosition = Auth::user()->employee->position_id;
         $this->getPosition = 18;
@@ -191,6 +191,7 @@ class ReportList extends Component
         $chkIncident = ShoIncident::where('report_date', $this->get_sho_detail->report_date)->where('sho_id', $this->get_sho_detail->id)->first();
         if ($chkIncident) {
             $this->alert('warning', 'Already Created!');
+            $this->resetExcept('report_date', 'getPosition');
         } else {
 
             ShoIncident::create([
@@ -203,7 +204,7 @@ class ReportList extends Component
                 'report_date' => $this->report_date,
             ]);
             $this->alert('success', 'Successfully Added!');
-            $this->reset('search_patient', 'patient', 'get_option', 'selected_patient_operation', 'get_patients', 'selected_patient', 'incident_description', 'getPosition');
+            $this->resetExcept('report_date', 'getPosition');
         }
     }
 
@@ -397,14 +398,29 @@ class ReportList extends Component
     }
     public function updateIncident()
     {
-        $this->validate([
-            'incident_case_reported' => ['required'],
-            'absconding_patient_case_reported' => ['required'],
-            'doa_patient_case_reported' => ['required'],
-            'other_security_function' => ['required'],
-            'trauma_patient_case_reported' => ['required'],
-        ]);
-        //dd($this->getIncidentDescription);
+        // $this->validate([
+        //     'incident_case_reported' => ['required'],
+        //     'absconding_patient_case_reported' => ['required'],
+        //     'doa_patient_case_reported' => ['required'],
+        //     'other_security_function' => ['required'],
+        //     'trauma_patient_case_reported' => ['required'],
+        // ]);
+        //dd($this->incident_case_reported);
+        if ($this->incident_case_reported == '') {
+            $this->incident_case_reported = 0;
+        }
+        if ($this->absconding_patient_case_reported == '') {
+            $this->absconding_patient_case_reported = 0;
+        }
+        if ($this->doa_patient_case_reported == '') {
+            $this->doa_patient_case_reported = 0;
+        }
+        if ($this->other_security_function == '') {
+            $this->other_security_function = 0;
+        }
+        if ($this->trauma_patient_case_reported == '') {
+            $this->trauma_patient_case_reported = 0;
+        }
         $updateIncident = ShoIncident::where('id', $this->getIncidentId)->first();
 
         $updateIncident->incident_case_reported = $this->incident_case_reported;

@@ -679,10 +679,10 @@
                 </div>
                 @if ($getIncidentId)
                     <div wire:loading.remove>
-                        <h3 class="text-lg font-bold ">Edit Incident</h3>
+                        {{-- <h3 class="text-lg font-bold ">Edit Incident</h3> --}}
                         <div class="grid grid-cols-3 mt-2 border-b-2">
                             <div class="col-span-2 font-semibold"> Incidents</div>
-                            <div class="font-semibold"> Replace</div>
+                            <div class="font-semibold"> Edit</div>
                         </div>
                         <div class="grid w-full grid-rows-5 m-1">
                             <div class="grid w-full grid-cols-3 rounded-lg">
@@ -691,7 +691,7 @@
                                         REPORTTED</div>
                                 @endif
                                 @if (is_null($incident_case_reported) or $incident_case_reported == '' or $incident_case_reported == 0)
-                                    <div class="col-span-2">NO CASE INCIDENT CASE REPORTTED?</div>
+                                    <div class="col-span-2">NO CASE INCIDENT CASE REPORTTED</div>
                                 @endif
                                 <div class="">
                                     <label for="" class="">YES</label>

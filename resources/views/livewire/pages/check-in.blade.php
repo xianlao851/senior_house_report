@@ -519,7 +519,7 @@
                 </div>
             </div>
 
-            <!-- Modal for search doctor -->
+            <!-- Search doctor -->
             <input type="checkbox" id="searchDoctor" class="modal-toggle" />
             <div class="modal ">
                 <div class="max-w-xl modal-box">
@@ -563,211 +563,210 @@
                             @endif
                             </ul>
                             {{-- <div>
-                                @if ($doctors)
+                                @if ($doctors != null)
                                     {{ $doctors->links() }}
                                 @endif
                             </div> --}}
                         </div>
+                        <div class="modal-action">
+                            <label for="searchDoctor"wire:click="reset_patient_from_to_id"
+                                class="btn btn-sm">Close!</label>
+                        </div>
                     </div>
-                    <div class="modal-action">
-                        <label for="searchDoctor"wire:click="reset_patient_from_to_id"
-                            class="btn btn-sm">Close!</label>
-                    </div>
-                </div>
-            </div><!-- Modal for search doctor -->
+                </div><!-- Modal for search doctor -->
 
-            <!-- Edit for transfer from -->
+                <!-- Edit for transfer from -->
 
-            <input type="checkbox" id="editTransferFrom" class="modal-toggle" />
-            <div class="modal">
-                <div class="modal-box">
-                    <div wire:loading wire:target="editTransferFrom" class="mt-2 mx-44">
-                        <span class="text-green-400 loading loading-lg loading-spinner "></span>
-                    </div>
-                    @if ($selected_patient)
-                        <div>
-                            <div class="join">
-                                <h3 class="font-bold text-black text-md join-item">
-                                    Patient Name: &nbsp;
-                                </h3>
-                                <p class="text-green-600 underline join-item">
-                                    {{ $selected_patient->patient->get_patient_name() }}</p>
-                            </div>
-                            <div class="py-2">
+                <input type="checkbox" id="editTransferFrom" class="modal-toggle" />
+                <div class="modal">
+                    <div class="modal-box">
+                        <div wire:loading wire:target="editTransferFrom" class="mt-2 mx-44">
+                            <span class="text-green-400 loading loading-lg loading-spinner "></span>
+                        </div>
+                        @if ($selected_patient)
+                            <div>
+                                <div class="join">
+                                    <h3 class="font-bold text-black text-md join-item">
+                                        Patient Name: &nbsp;
+                                    </h3>
+                                    <p class="text-green-600 underline join-item">
+                                        {{ $selected_patient->patient->get_patient_name() }}</p>
+                                </div>
+                                <div class="py-2">
 
-                                <label for="diagnosis"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Diagnosis</label>
-                                <textarea type="text" wire:model="getDiagnosis" id="diagnosis "
-                                    class="block w-full text-sm text-gray-900 border rounded-md focus:border-green-700 focus:ring-green-700 bg-gray-50"
-                                    required readonly> </textarea>
+                                    <label for="diagnosis"
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Diagnosis</label>
+                                    <textarea type="text" wire:model="getDiagnosis" id="diagnosis "
+                                        class="block w-full text-sm text-gray-900 border rounded-md focus:border-green-700 focus:ring-green-700 bg-gray-50"
+                                        required readonly> </textarea>
+                                </div>
+                                <div class="py-2">
+                                    <label for="reason"
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Reason</label>
+                                    <textarea type="text" wire:model="getReason" id="reason "
+                                        class="block w-full text-sm text-gray-900 border rounded-md bg-gray-50 focus:border-green-700 focus:ring-green-700"
+                                        placeholder="Reason" required> </textarea>
+                                </div>
+                                <div class="py-2">
+                                    <label for="facility"
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Transfering
+                                        Facility</label>
+                                    <input wire:model="getFacility" id="facility" required
+                                        class="block w-full text-sm text-gray-900 border rounded-md bg-gray-50 focus:border-green-700 focus:ring-green-700"
+                                        placeholder="Transfering Facility">
+                                    </input>
+                                </div>
+                                <div class="modal-action">
+                                    <label for="editTransferFrom" wire:click='refresh'
+                                        class="btn btn-sm btn-danger">Close!</label>
+                                    <label for="editTransferFrom" class="btn btn-sm btn-success"
+                                        wire:click='updateTranssferFrom' for="editTransferFrom">Update</label>
+
+                                </div>
                             </div>
-                            <div class="py-2">
-                                <label for="reason"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Reason</label>
-                                <textarea type="text" wire:model="getReason" id="reason "
-                                    class="block w-full text-sm text-gray-900 border rounded-md bg-gray-50 focus:border-green-700 focus:ring-green-700"
-                                    placeholder="Reason" required> </textarea>
-                            </div>
-                            <div class="py-2">
-                                <label for="facility"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Transfering
-                                    Facility</label>
-                                <input wire:model="getFacility" id="facility" required
-                                    class="block w-full text-sm text-gray-900 border rounded-md bg-gray-50 focus:border-green-700 focus:ring-green-700"
-                                    placeholder="Transfering Facility">
-                                </input>
-                            </div>
+                        @else
                             <div class="modal-action">
                                 <label for="editTransferFrom" wire:click='refresh'
                                     class="btn btn-sm btn-danger">Close!</label>
-                                <label for="editTransferFrom" class="btn btn-sm btn-success"
-                                    wire:click='updateTranssferFrom' for="editTransferFrom">Update</label>
-
                             </div>
-                        </div>
-                    @else
-                        <div class="modal-action">
-                            <label for="editTransferFrom" wire:click='refresh'
-                                class="btn btn-sm btn-danger">Close!</label>
-                        </div>
-                    @endif
+                        @endif
 
-                </div>
-            </div>
-            <!-- Edit for transfer to -->
-            <input type="checkbox" id="editTransferTo" class="modal-toggle" />
-            <div class="modal">
-                <div class="modal-box">
-                    <div wire:loading wire:target="editTransferTo" class="mt-2 mx-44">
-                        <span class="text-green-400 loading loading-lg loading-spinner "></span>
                     </div>
-                    @if ($selected_patient)
-                        <div>
-                            <div class="join">
-                                <h3 class="font-bold text-black text-md join-item">
-                                    Patient Name: &nbsp;
-                                </h3>
-                                <p class="text-green-600 underline join-item">
-                                    {{ $selected_patient->patient->get_patient_name() }}</p>
-                            </div>
-                            <div class="py-2">
+                </div>
+                <!-- Edit for transfer to -->
+                <input type="checkbox" id="editTransferTo" class="modal-toggle" />
+                <div class="modal">
+                    <div class="modal-box">
+                        <div wire:loading wire:target="editTransferTo" class="mt-2 mx-44">
+                            <span class="text-green-400 loading loading-lg loading-spinner "></span>
+                        </div>
+                        @if ($selected_patient)
+                            <div>
+                                <div class="join">
+                                    <h3 class="font-bold text-black text-md join-item">
+                                        Patient Name: &nbsp;
+                                    </h3>
+                                    <p class="text-green-600 underline join-item">
+                                        {{ $selected_patient->patient->get_patient_name() }}</p>
+                                </div>
+                                <div class="py-2">
 
-                                <label for="diagnosis"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Diagnosis</label>
-                                <textarea type="text" wire:model="getDiagnosis" id="diagnosis "
-                                    class="block w-full text-sm text-gray-900 border rounded-md focus:border-green-700 focus:ring-green-700 bg-gray-50"
-                                    required readonly> </textarea>
+                                    <label for="diagnosis"
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Diagnosis</label>
+                                    <textarea type="text" wire:model="getDiagnosis" id="diagnosis "
+                                        class="block w-full text-sm text-gray-900 border rounded-md focus:border-green-700 focus:ring-green-700 bg-gray-50"
+                                        required readonly> </textarea>
+                                </div>
+                                <div class="py-2">
+                                    <label for="reason"
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Reason</label>
+                                    <textarea type="text" wire:model="getReason" id="reason "
+                                        class="block w-full text-sm text-gray-900 border rounded-md bg-gray-50 focus:border-green-700 focus:ring-green-700"
+                                        placeholder="Reason" required> </textarea>
+                                </div>
+                                <div class="py-2">
+                                    <label for="facility"
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Transfering
+                                        Facility</label>
+                                    <input wire:model="getFacility" id="facility" required
+                                        class="block w-full text-sm text-gray-900 border rounded-md bg-gray-50 focus:border-green-700 focus:ring-green-700"
+                                        placeholder="Transfering Facility">
+                                    </input>
+                                </div>
+                                <div class="modal-action">
+                                    <label for="editTransferTo" wire:click='refresh'
+                                        class="btn btn-sm btn-danger">Close!</label>
+                                    <label class="btn btn-sm btn-success" wire:click.lazy='updateTranssferTo'
+                                        for="editTransferTo">Save</label>
+
+                                </div>
                             </div>
-                            <div class="py-2">
-                                <label for="reason"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Reason</label>
-                                <textarea type="text" wire:model="getReason" id="reason "
-                                    class="block w-full text-sm text-gray-900 border rounded-md bg-gray-50 focus:border-green-700 focus:ring-green-700"
-                                    placeholder="Reason" required> </textarea>
-                            </div>
-                            <div class="py-2">
-                                <label for="facility"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Transfering
-                                    Facility</label>
-                                <input wire:model="getFacility" id="facility" required
-                                    class="block w-full text-sm text-gray-900 border rounded-md bg-gray-50 focus:border-green-700 focus:ring-green-700"
-                                    placeholder="Transfering Facility">
-                                </input>
-                            </div>
+                        @else
                             <div class="modal-action">
                                 <label for="editTransferTo" wire:click='refresh'
                                     class="btn btn-sm btn-danger">Close!</label>
-                                <label class="btn btn-sm btn-success" wire:click.lazy='updateTranssferTo'
-                                    for="editTransferTo">Save</label>
-
                             </div>
-                        </div>
-                    @else
-                        <div class="modal-action">
-                            <label for="editTransferTo" wire:click='refresh'
-                                class="btn btn-sm btn-danger">Close!</label>
-                        </div>
-                    @endif
+                        @endif
 
+                    </div>
                 </div>
             </div>
         </div>
+
+        <script>
+            function deleteCheckMo(id) {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#0f7d34",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Livewire.emit('deleteComfirmedMo', id);
+                    }
+                });
+            }
+
+            function deleteCheckMs(id) {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#0f7d34",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Livewire.emit('deleteComfirmedMs', id);
+                    }
+                });
+            }
+
+            function deleteTransferFrom(id) {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#0f7d34",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Livewire.emit('deleteComfirmedTransferFrom', id);
+                    }
+                });
+            }
+
+            function deleteTransferTo(id) {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#0f7d34",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Livewire.emit('deleteComfirmedTransferTo', id);
+                    }
+                });
+            }
+
+            function permission() {
+                Swal.fire({
+                    title: "You dont have permission!",
+                    text: "Only doctors have the permission to this fucntion!",
+                    icon: "warning",
+                    confirmButtonColor: "#0f7d34",
+                });
+            }
+        </script>
+
+
     </div>
-
-    <script>
-        function deleteCheckMo(id) {
-            Swal.fire({
-                title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#0f7d34",
-                confirmButtonText: "Yes, delete it!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Livewire.emit('deleteComfirmedMo', id);
-                }
-            });
-        }
-
-        function deleteCheckMs(id) {
-            Swal.fire({
-                title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#0f7d34",
-                confirmButtonText: "Yes, delete it!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Livewire.emit('deleteComfirmedMs', id);
-                }
-            });
-        }
-
-        function deleteTransferFrom(id) {
-            Swal.fire({
-                title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#0f7d34",
-                confirmButtonText: "Yes, delete it!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Livewire.emit('deleteComfirmedTransferFrom', id);
-                }
-            });
-        }
-
-        function deleteTransferTo(id) {
-            Swal.fire({
-                title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#0f7d34",
-                confirmButtonText: "Yes, delete it!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Livewire.emit('deleteComfirmedTransferTo', id);
-                }
-            });
-        }
-
-        function permission() {
-            Swal.fire({
-                title: "You dont have permission!",
-                text: "Only doctors have the permission to this fucntion!",
-                icon: "warning",
-                confirmButtonColor: "#0f7d34",
-            });
-        }
-    </script>
-
-
-</div>

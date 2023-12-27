@@ -85,7 +85,7 @@ class CheckIn extends Component
     public $getFacility;
     public $getShoId;
     public $getTransferId;
-    public $doctorslist;
+    public $doctorslist = [];
 
     public $getodate;
     public $getRecordDate;
@@ -120,16 +120,18 @@ class CheckIn extends Component
 
         $this->get_doctors = HrisEmployee::select('emp_id', 'lastname', 'firstname')->where(function ($query) use ($columns) {
             foreach ($columns as $column) {
-                $query->orWhere($column, $this->search_doctor)->whereIn('department_id', $this->inc_depts)
+                $query->orWhere($column, $this->search_doctor)
+                    ->whereIn('department_id', $this->inc_depts)
                     ->whereIn('position_id', ['18', '59'])
                     ->with('user');
             }
         })->get();
+        $this->resetPage();
     }
     public function mount()
     {
         $date = date('Y-m-d H:i:s'); //take current date
-        $date = date('2023-12-22 17:00:00');
+        $date = date('2023-12-27 17:00:00');
         $this->report_date = $date;
         //$this->getHospitalIds = Hospital::orderBy('hospital_name', 'asc')->get();
         $this->senior_house_officer = sprintf('%06d', Auth::user()->employee->emp_id); // get user emp_id, details for sho in charge
@@ -156,6 +158,7 @@ class CheckIn extends Component
         $this->currentDate = date('Y-m-d', strtotime($this->report_date));
         $this->getTime = $cur_time;
         $this->getRecordDate = $this->recordDate;
+
 
         return view('livewire.pages.check-in', [
             'departments' =>  $departments ?? null,
