@@ -38,8 +38,8 @@ Route::middleware([
         return view('dashboard');
     })->name('dashboard');
 
-    Route::get('/doctors', CheckIn::class)->name('doctors');
-    Route::get('/operations', ReportList::class)->name('operations');
+    Route::get('/doctors_transfers', CheckIn::class)->name('doctors_transfers');
+    Route::get('/operations_incidents_events', ReportList::class)->name('operations_incidents_events');
     Route::get('/addpatient', AddPatientTable::class)->name('addpatient');
     Route::get('/shoreports', CheckInTableList::class)->name('shoreports');
     Route::get('/shoreports/view/{id}', ViewCheckInTableList::class)->name('viewshoreports');
@@ -47,7 +47,7 @@ Route::middleware([
     Route::get('/viewopatientlist/{id}', ViewPatientPage::class)->name('viewPatient');
     Route::get('/patientlist', PatientListPage::class)->name('patientlist');
     Route::get('/summary', SummaryPage::class)->name('summary');
-    Route::get('/viewprintlist/{id}', ViewPrintList::class)->name('viewprintlist');
+    Route::get('/view_print/{id}', ViewPrintList::class)->name('view_print');
 
     Route::get('/printtwo/{id}', [ExportPdf::class, 'printTwoPage'])->name('printtwo');
 

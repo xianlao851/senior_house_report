@@ -72,8 +72,9 @@ class ViewPrintList extends Component
     public function render()
     {
         $detail = ShoDetail::where('id', $this->getid)->first(); //take the senior head officer details in the sho table that have beed checked in
-        $trasnfers = shoTransferFrom::where('sho_id', $detail->id)->get();
-        $trasnsferTos = ShoTransferTo::where('sho_id', $detail->id)->get();
+        $trasnfers = shoTransferFrom::select('diagnosis', 'reason', 'facility', 'patient_id')->where('sho_id', $detail->id)->get();
+        $trasnsferTos = ShoTransferTo::select('diagnosis', 'reason', 'facility', 'patient_id')->where('sho_id', $detail->id)->get();
+
         if ($detail) {
             $departments = Department::where('division_id', '8')->get(); // take the department that belongs only in a specified dept, use for filtering data
             $this->current_detail = $detail; //set the current detail of senior head officer
@@ -81,11 +82,12 @@ class ViewPrintList extends Component
         $this->get_date = $detail->report_date;
         // $this->getCount = Operation::where('sho_id', $detail->id)->count();
         //$operations=Operation::where('record_date', $detail->sho_id)->paginate(5);
-        $operations = Operation::where('sho_id', $detail->id)->get();
-        $departments = Department::where('division_id', $this->getdivision)->get();
-        $getdepartments = HospitalTypesEr::whereIn('tscode', $this->dept_code)->get();
-        $incidents = ShoIncident::where('sho_id', $detail->id)->get();
-        $significanIncidents = ShoSignificantEvent::where('sho_id', $detail->id)->get();
+
+        $operations = Operation::select('patient_id', 'operation_done', 'department')->where('sho_id', $detail->id)->get();
+        $departments = Department::select('id', 'department')->where('division_id', $this->getdivision)->get();
+        $getdepartments = HospitalTypesEr::select('tsdesc', 'tscode')->whereIn('tscode', $this->dept_code)->get();
+        $incidents = ShoIncident::select('incident_case_reported', 'absconding_patient_case_reported', 'doa_patient_case_reported', 'other_security_function', 'trauma_patient_case_reported')->where('sho_id', $detail->id)->get();
+        $significanIncidents = ShoSignificantEvent::select('patient_id', 'nature_of_incident', 'place_of_incident', 'time_of_incident', 'date_of_incident')->where('sho_id', $detail->id)->get();
         /*----*/
 
         // for third page
@@ -94,16 +96,16 @@ class ViewPrintList extends Component
         $todate = $dat->format('Y-m-d');
         $this->recordDate = date('Y-m-d', strtotime($detail->report_date));
 
-        $this->countmed = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'MED')->count();
-        $this->ent = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'ENT')->count();
-        $this->countsurgery = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'SURG')->count();
-        $this->ob = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'GYNE')->count();
-        $this->pedia = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'PEDIA')->count();
-        $this->anes = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'ANES')->count();
-        $this->optha = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'OPHTH')->count();
-        $this->famed = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'FAMED')->count();
-        $this->ortho = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'ORTHO')->count();
-        $this->getCount = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate . ' 17:00:00', $todate  . ' 07:59:59'])->count();
+        $this->countmed = HospitalHerlog::select('erdate')->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'MED')->count();
+        $this->ent = HospitalHerlog::select('erdate')->whereBetween(DB::raw('erdate'), [$this->recordDate . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'ENT')->count();
+        $this->countsurgery = HospitalHerlog::select('erdate')->whereBetween(DB::raw('erdate'), [$this->recordDate . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'SURG')->count();
+        $this->ob = HospitalHerlog::select('erdate')->whereBetween(DB::raw('erdate'), [$this->recordDate . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'GYNE')->count();
+        $this->pedia = HospitalHerlog::select('erdate')->whereBetween(DB::raw('erdate'), [$this->recordDate . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'PEDIA')->count();
+        $this->anes = HospitalHerlog::select('erdate')->whereBetween(DB::raw('erdate'), [$this->recordDate . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'ANES')->count();
+        $this->optha = HospitalHerlog::select('erdate')->whereBetween(DB::raw('erdate'), [$this->recordDate . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'OPHTH')->count();
+        $this->famed = HospitalHerlog::select('erdate')->whereBetween(DB::raw('erdate'), [$this->recordDate . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'FAMED')->count();
+        $this->ortho = HospitalHerlog::select('erdate')->whereBetween(DB::raw('erdate'), [$this->recordDate . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'ORTHO')->count();
+        $this->getCount = HospitalHerlog::select('erdate')->whereBetween(DB::raw('erdate'), [$this->recordDate . ' 17:00:00', $todate  . ' 07:59:59'])->count();
 
         return view('livewire.check-in-table.view-print-list', [
             'departments' => $detail ? $departments : null,

@@ -110,7 +110,7 @@
                                         <td class="text-xs border">
                                             <label class=" btn btn-secondary btn-xs"
                                                 @if ($getDiffHours <= 18) @if ($getPosition == 19 or $getPosition == 18 or $getPosition == 57 or $getPosition == 58 or $getPosition == 59)
-                                                wire:click="editOperation('{{ $operation->id }}','{{ $operation->operation_done }}','{{ $operation->patient_id }}','{{ $operation->deparment_id }}','{{ $operation->sho_id }}')" for="editOperation"
+                                                wire:click="editOperation('{{ $operation->id }}','{{ $operation->operation_done }}','{{ $operation->patient_id }}','{{ $operation->department }}','{{ $operation->sho_id }}')" for="editOperation"
                                                 @else onclick="permission()" @endif
                                                 @endif><i class="las la-edit la-lg"></i></label>
                                             <label class="btn btn-warning btn-xs"

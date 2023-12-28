@@ -72,7 +72,7 @@ class SummaryPage extends Component
         $this->getId = $this->get_sho_detail->id;
         $this->get_date = $this->get_sho_detail->report_date;
         $departments = Department::where('division_id', $this->getdivision)->get();
-        $trasnferfroms = shoTransferFrom::where('sho_id', $this->get_sho_detail->id)->paginate(40);
+        $trasnferfroms = shoTransferFrom::select('diagnosis', 'reason', 'facility', 'patient_id')->where('sho_id', $this->get_sho_detail->id)->paginate(40);
 
         $this->recordDate = date('Y-m-d', strtotime($this->get_sho_detail->report_date));
         $this->currentDate = date('Y-m-d', strtotime($this->report_date));
@@ -83,16 +83,16 @@ class SummaryPage extends Component
         $todate = $dat->format('Y-m-d');
         $this->recordDate = date('Y-m-d', strtotime($this->get_sho_detail->report_date));
         //$this->recordDate = date('Y-m-d', strtotime('2023-12-26'));
-        $this->countmed = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'MED')->count();
-        $this->ent = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'ENT')->count();
-        $this->countsurgery = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'SURG')->count();
-        $this->ob = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'GYNE')->count();
-        $this->pedia = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'PEDIA')->count();
-        $this->anes = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'ANES')->count();
-        $this->optha = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'OPHTH')->count();
-        $this->famed = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'FAMED')->count();
-        $this->ortho = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'ORTHO')->count();
-        $this->getCount = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->count();
+        $this->countmed = HospitalHerlog::select('erdate')->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'MED')->count();
+        $this->ent = HospitalHerlog::select('erdate')->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'ENT')->count();
+        $this->countsurgery = HospitalHerlog::select('erdate')->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'SURG')->count();
+        $this->ob = HospitalHerlog::select('erdate')->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'GYNE')->count();
+        $this->pedia = HospitalHerlog::select('erdate')->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'PEDIA')->count();
+        $this->anes = HospitalHerlog::select('erdate')->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'ANES')->count();
+        $this->optha = HospitalHerlog::select('erdate')->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'OPHTH')->count();
+        $this->famed = HospitalHerlog::select('erdate')->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'FAMED')->count();
+        $this->ortho = HospitalHerlog::select('erdate')->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->where('tscode', 'ORTHO')->count();
+        $this->getCount = HospitalHerlog::select('erdate')->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])->count();
 
         return view('livewire.summary.summary-page', [
             'departments' => $departments ?? null,

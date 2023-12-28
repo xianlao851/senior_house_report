@@ -164,12 +164,13 @@ class ReportList extends Component
         $dat->modify('+1 day');
         $todate = $dat->format('Y-m-d');
         $this->recordDate = date('Y-m-d', strtotime($this->get_sho_detail->report_date));
-        $this->getCount = HospitalHerlog::whereBetween(DB::raw('erdate'), [$this->recordDate . ' 17:00:00', $todate  . ' 07:59:59'])->count();
-        $operations = Operation::where('sho_id', $this->get_sho_detail->id)->paginate(4, ['*'], 'operation');
+        $this->getCount = HospitalHerlog::select('erdate')->whereBetween(DB::raw('erdate'), [$this->recordDate . ' 17:00:00', $todate  . ' 07:59:59'])->count();
+        $operations = Operation::select('id', 'patient_id', 'sho_id', 'operation_done', 'department')->where('sho_id', $this->get_sho_detail->id)->paginate(4, ['*'], 'operation');
         //$departments = Department::where('division_id', $this->getdivision)->get();
         $getdepartments = HospitalTypesEr::whereIn('tscode', $this->dept_code)->get();
+
         $incidents = ShoIncident::where('sho_id', $this->get_sho_detail->id)->get();
-        $significanIncidents = ShoSignificantEvent::where('sho_id', $this->get_sho_detail->id)->paginate(4, ['*'], 'significanIncident');
+        $significanIncidents = ShoSignificantEvent::select('id', 'sho_id', 'patient_id', 'nature_of_incident', 'place_of_incident', 'time_of_incident', 'date_of_incident')->where('sho_id', $this->get_sho_detail->id)->paginate(4, ['*'], 'significanIncident');
 
         $this->recordDate = date('Y-m-d', strtotime($this->get_sho_detail->report_date));
         $this->currentDate = date('Y-m-d', strtotime($this->report_date));
@@ -347,6 +348,7 @@ class ReportList extends Component
         $this->get_patient = HospitalHerlog::where('hpercode', $this->patient_id)->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $this->getodate  . ' 07:59:59'])->with('patient')->latest('erdate')->first();
 
         $this->selected_patient = $this->get_patient;
+        //dd($this->getDept);
     }
     //{{ $significanIncident->id }}','{{ $significanIncident->nature_of_incident }}','{{ $significanIncident->place_of_incident }}','{{ $significanIncident->time_of_incident }}','{{ $significanIncident->date_of_incident }}')
     public function editSignificantIncident($significanIncidentId, $gnature_of_incident, $gplace_of_incident, $gtime_of_incident, $gdate_of_incident, $gpatientId)

@@ -106,7 +106,7 @@ class CheckIn extends Component
         $this->get_patients = DB::connection('hospital')->table('dbo.hperson')
             ->join('dbo.herlog', 'dbo.hperson.hpercode', '=', 'dbo.herlog.hpercode')
             ->join('dbo.hencdiag', 'dbo.herlog.enccode', '=', 'dbo.hencdiag.enccode')
-            ->select('dbo.hperson.patlast', 'dbo.hperson.patfirst', 'dbo.hperson.patmiddle', 'dbo.hperson.hpercode')
+            ->select('dbo.hperson.patlast', 'dbo.hperson.patfirst', 'dbo.hperson.patmiddle', 'dbo.hperson.hpercode', 'dbo.herlog.erdate')
             ->where(function ($query) use ($columns) {
                 foreach ($columns as $column) {
                     $query->orWhere($column, 'like', '%' . $this->search_patient . '%')
@@ -130,7 +130,7 @@ class CheckIn extends Component
                     ->with('user');
             }
         })->get();
-        $this->resetPage();
+        //$this->resetPage();
     }
     public function mount()
     {
@@ -153,10 +153,10 @@ class CheckIn extends Component
         $this->getShoDetail = $detail;
         $this->getCurrentDateTime = Carbon::createFromFormat('Y-m-d H:i:s', $this->report_date);
         $this->getDiffHours = $this->getCurrentDateTime->diffInHours($detail->report_date);
-        $trasnferfroms = shoTransferFrom::where('sho_id', $detail->id)->paginate(4, ['*'], 'trasnferfrom');
-        $trasnsferTos = ShoTransferTo::where('sho_id', $detail->id)->paginate(4, ['*'], 'trasnsferTo');
+        $trasnferfroms = shoTransferFrom::select('sho_id', 'id', 'diagnosis', 'reason', 'facility', 'patient_id')->where('sho_id', $detail->id)->paginate(4, ['*'], 'trasnferfrom');
+        $trasnsferTos = ShoTransferTo::select('sho_id', 'id', 'diagnosis', 'reason', 'facility', 'patient_id')->where('sho_id', $detail->id)->paginate(4, ['*'], 'trasnsferTo');
         $this->current_detail = $detail; //set the current detail of senior head officer
-        $departments = HrisDepartment::whereIn('department_id', $this->inc_depts)->where('division_id', '2')->get(); // take the department that belongs only in a specified dept, use for filtering data
+        $departments = HrisDepartment::select('department_id', 'department')->whereIn('department_id', $this->inc_depts)->where('division_id', '2')->get(); // take the department that belongs only in a specified dept, use for filtering data
 
         $this->recordDate = date('Y-m-d', strtotime($detail->report_date));
         $this->currentDate = date('Y-m-d', strtotime($this->report_date));
@@ -292,7 +292,7 @@ class CheckIn extends Component
         $todate = $dat->format('Y-m-d');
         $this->getodate = $todate;
 
-        $this->get_patient = HospitalHerlog::where('hpercode', $this->patientFromId)
+        $this->get_patient = HospitalHerlog::select('hpercode', 'enccode')->where('hpercode', $this->patientFromId)
             ->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $this->getodate  . ' 07:59:59'])
             ->whereNotNull('tscode')
             ->with('patient')->latest('erdate')->first();
@@ -354,7 +354,7 @@ class CheckIn extends Component
         $todate = $dat->format('Y-m-d');
         $this->getodate = $todate;
 
-        $this->get_patient = HospitalHerlog::where('hpercode', $this->patienToId)
+        $this->get_patient = HospitalHerlog::select('hpercode', 'enccode')->where('hpercode', $this->patienToId)
             ->whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $this->getodate  . ' 07:59:59'])
             ->whereNotNull('tscode')
             ->with('patient')->latest('erdate')->first();
@@ -458,7 +458,7 @@ class CheckIn extends Component
         $this->resetExcept('report_date', 'current_detail', 'trasnferfrom', 'trasnsferTo', 'getHospitalIds', 'getPosition');
     }
 
-    public function editTransferFromBack($transferId, $cDiagnosis, $cFacility, $cReason, $cpatientId, $cShoid)
+    public function editTransferFrom($transferId, $cDiagnosis, $cFacility, $cReason, $cpatientId, $cShoid)
     {
         $this->patientId = $cpatientId;
         $this->getDiagnosis = $cDiagnosis;
@@ -497,6 +497,7 @@ class CheckIn extends Component
             'getReason' => ['required'],
             'getFacility' => ['required']
         ]);
+
         $epdateTransferFrom = ShoTransferFrom::where('id', $this->getTransferId)->first();
         $epdateTransferFrom->patient_id = $this->patientId;
         $epdateTransferFrom->sho_id = $this->getShoId;

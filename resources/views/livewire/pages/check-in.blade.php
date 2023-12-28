@@ -199,7 +199,7 @@
                                     <td class="border">
                                         <label class="btn btn-xs btn-secondary"
                                             @if ($getDiffHours <= 18) @if ($getPosition == 19 or $getPosition == 18 or $getPosition == 57 or $getPosition == 58 or $getPosition == 59)
-                                            title="Edit?"  wire:click="editTransferFromBack('{{ $transfer->id }}','{{ $transfer->diagnosis }}','{{ $transfer->facility }}','{{ $transfer->reason }}','{{ $transfer->patient_id }}','{{ $transfer->sho_id }}')"
+                                            title="Edit?"  wire:click="editTransferFrom('{{ $transfer->id }}','{{ $transfer->diagnosis }}','{{ $transfer->facility }}','{{ $transfer->reason }}','{{ $transfer->patient_id }}','{{ $transfer->sho_id }}')"
                                             for="editTransferFrom"
                                             @else
                                             onclick="permission()" @endif
@@ -313,12 +313,6 @@
                                             class="input input-bordered join-item w-[450px] focus:border-green-700 focus:ring-green-700"
                                             type="text" wire:model.lazy="search_patient" placeholder="Search" />
                                     </div>
-                                    {{-- <select class="select select-bordered join-item" wire:model='get_option'>
-                                    <option>Filter</option>
-                                    <option value="dbo.hperson.hpercode">Hospital No.</option>
-                                    <option value="dbo.hperson.patlast">Last name</option>
-                                    <option value="dbo.hperson.patfirst">First name</option>
-                                </select> --}}
                                     <div class="indicator">
                                         <button class="w-20 text-white bg-green-700 btn join-item">Search</button>
                                         {{-- wire:click='searchpatient'>Search</button> --}}
@@ -337,8 +331,9 @@
                                                     wire:click="get_patientIdFrom({{ $pat->hpercode }})">
                                                     {{ $pat->patlast }}, {{ $pat->patfirst }}
                                                     @if ($pat->patmiddle != null or $pat->patmiddle == '')
-                                                        {{ $pat->patmiddle }}
+                                                        {{ $pat->patmiddle }},
                                                     @endif
+                                                    {{ $pat->erdate }}
                                                 </li>
                                             @empty
                                                 <div class="mx-1">No records!</div>

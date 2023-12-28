@@ -33,7 +33,7 @@
                             </a>
                         </td> --}}
                         <td>
-                            <a @if ($getPosition == 19 or $getPosition == 18 or $getPosition == 57 or $getPosition == 58 or $getPosition == 59) href="{{ route('viewprintlist', ['id' => $shodetail->id]) }}"
+                            <a @if ($getPosition == 19 or $getPosition == 18 or $getPosition == 57 or $getPosition == 58 or $getPosition == 59) href="{{ route('view_print', ['id' => $shodetail->id]) }}"
                             @else onclick="permission()" @endif
                                 class="btn btn-primary btn-xs hover:bg-slate-500">
                                 <i class="las la-eye la-2x"></i>
