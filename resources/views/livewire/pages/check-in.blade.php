@@ -45,21 +45,20 @@
             @if ($getDiffHours < 24)
                 <div class="absolute top-0 flex gap-6 mt-2 right-3">
                     {{-- @if ($cur_time >= 20 and $cur_time <= 8) --}}
-                    <div class="flex mb-3 space-x-3">
+                    {{-- <div class="flex mb-3 space-x-3">
                         <div class="w-full max-w-xs form-control">
                             <label class="label">
                                 <span class="ml-6 text-black label-text"> Medical Officer III /
                                     Specialist</span>
                             </label>
                             <div class="ml-[100px] indicator">
-                                {{-- 19, 18, 57, 58, 59 --}}
                                 <label
                                     @if ($getPosition == 19 or $getPosition == 18 or $getPosition == 57 or $getPosition == 58 or $getPosition == 59) for="searchDoctor" @else onclick="permission()" @endif
                                     class="text-white bg-green-600 btn join-item btn-sm hover:bg-gray-400">Add
                                     Doctor</label>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="flex mb-3 space-x-3">
                         <div class="w-full max-w-xs form-control">
                             <label class="label">
@@ -106,22 +105,6 @@
                         <tr class="uppercase">
                             <td class="text-black border text-bold">{{ $department->department }}</td>
                             <td class="border">
-                                {{-- @if ($current_detail)
-                                @php
-                                    // $on_duty = App\Models\HrisEmployee::where('department_id', $department->department_id)
-                                    //     ->where('position_id', '18')
-                                    //     ->whereHas('dtr', function ($query) use ($current_detail) {
-                                    //         $query->where('dtr_date', $current_detail->report_date);
-                                    //     })
-                                    //     ->get();
-                                    $on_duty = Illuminate\Support\Facades\DB::connection('hris')->select("SELECT  te.prefix, te.lastname FROM `tbl_employee` AS te WHERE `department_id` = ? AND `position_id` = '18' AND EXISTS (SELECT dtr_date FROM `tbl_employee_dtr` WHERE `te`.`emp_id` = `tbl_employee_dtr`.`emp_id` AND `dtr_date` = ? )", [$department->department_id, $current_detail->report_date]);
-                                @endphp
-                                @foreach ($on_duty as $emp)
-                                    <span class="capitalize">{{ $emp->prefix . ' ' . $emp->lastname }}
-                                        {{ $loop->last ? '' : '/ ' }}</span>
-                                @endforeach
-                            @endif --}}
-                                {{-- {{ $checkin_mo->employee->emp_id }} --}}
                                 @foreach ($department->checked_in_mo($current_detail->id)->get() as $checkin_mo)
                                     @if ($getDiffHours > 18)
                                         <label for=""
@@ -135,7 +118,15 @@
                                         /
                                     @endif
                                 @endforeach
+                                @if ($getDiffHours <= 18)
+                                    @if ($getPosition == 19 or $getPosition == 18 or $getPosition == 57 or $getPosition == 58 or $getPosition == 59)
+                                        <label wire:click="getDepartmenttId('{{ $department->department_id }}')"
+                                            for="searchDoctorMo"><i
+                                                class="bg-green-200 las la-plus la-lg btn btn-xs"></i></label>
+                                    @endif
+                                @endif
                             </td>
+
                             <td class="border">
                                 @foreach ($department->checked_in_ms($current_detail->id)->get() as $checkin_ms)
                                     @if ($getDiffHours > 18)
@@ -153,6 +144,14 @@
                                         /
                                     @endif
                                 @endforeach
+                                @if ($getDiffHours <= 18)
+                                    @if ($getPosition == 19 or $getPosition == 18 or $getPosition == 57 or $getPosition == 58 or $getPosition == 59)
+                                        <label wire:click="getDepartmenttId('{{ $department->department_id }}')"
+                                            for="searchDoctorMs"><i
+                                                class="bg-green-200 las la-plus la-lg btn btn-xs"></i></label>
+                                    @endif
+                                @endif
+
                             </td>
                         </tr>
                     @endforeach
@@ -493,7 +492,7 @@
                     </div>
                 </div> <!-- adding transfer to end-->
 
-                <input type="checkbox" id="searchDoctor" class="modal-toggle" /> <!-- search doctor-->
+                <input type="checkbox" id="searchDoctorMo" class="modal-toggle" /> <!-- search doctor MO-->
                 <div class="modal ">
                     <div class="max-w-xl modal-box">
                         <h3 class="text-lg font-bold"></h3>
@@ -504,16 +503,8 @@
                                     class="input input-bordered join-item w-[450px] focus:border-green-700 focus:ring-green-700"
                                     type="search" wire:model.lazy='search_doctor' placeholder="Search" />
                             </div>
-                            {{-- <select wire:model='get_option'
-                                class="text-black select select-bordered join-item focus:border-green-700 focus:ring-green-700">
-                                <option class="">Filter</option>
-                                <option value="emp_id">Employee ID</option>
-                                <option value="lastname"> Last Name</option>
-                                <option value="firstname">First Name</option>
-                            </select> --}}
                             <div class="indicator">
                                 <button class="text-white bg-green-700 btn join-item">Search</button>
-                                {{-- wire:click='searchDoctor'>Search</> --}}
                             </div>
                         </div>
                         <div wire:loading wire:target="search_doctor" class="mt-4 mx-44">
@@ -524,7 +515,7 @@
                                 @if ($doctors)
                                     @forelse ($doctors as $doctor)
                                         <li class="w-full mt-2 rounded-sm shadow-lg cursor-pointer hover:bg-gray-300 bg-slate-200"
-                                            wire:click='check_in_mo_sp({{ $doctor->emp_id }})'>
+                                            wire:click='check_in_mo({{ $doctor->emp_id }})' for="searchDoctorMo">
                                             {{ $doctor->fullname() }}
                                         </li>
                                     @empty
@@ -541,10 +532,55 @@
                             </div> --}}
                         </div>
                         <div class="modal-action">
-                            <label for="searchDoctor"wire:click="reset_patient_from_to_id" class="btn btn-sm">Close!</label>
+                            <label for="searchDoctorMo"wire:click="reset_patient_from_to_id" class="btn btn-sm">Close!</label>
                         </div>
                     </div>
-                </div><!-- Modal for search doctor -->
+                </div><!-- Modal for search doctor MO-->
+
+                <input type="checkbox" id="searchDoctorMs" class="modal-toggle" /> <!-- search doctor MS-->
+                <div class="modal ">
+                    <div class="max-w-xl modal-box">
+                        <h3 class="text-lg font-bold"></h3>
+                        <p class="py-4"></p>
+                        <div class="join">
+                            <div>
+                                <input
+                                    class="input input-bordered join-item w-[450px] focus:border-green-700 focus:ring-green-700"
+                                    type="search" wire:model.lazy='search_doctor' placeholder="Search" />
+                            </div>
+                            <div class="indicator">
+                                <button class="text-white bg-green-700 btn join-item">Search</button>
+                            </div>
+                        </div>
+                        <div wire:loading wire:target="search_doctor" class="mt-4 mx-44">
+                            <span class="text-green-400 loading loading-md loading-spinner "></span>
+                        </div>
+                        <div class="mt-2 text-black font-extralight" wire:loading.remove>
+                            <ul class="">
+                                @if ($doctors)
+                                    @forelse ($doctors as $doctor)
+                                        <li class="w-full mt-2 rounded-sm shadow-lg cursor-pointer hover:bg-gray-300 bg-slate-200"
+                                            wire:click='check_in_ms({{ $doctor->emp_id }})' for="searchDoctorMs">
+                                            {{ $doctor->fullname() }}
+                                        </li>
+                                    @empty
+                                        <div class="mx-1">No records!</div>
+                                    @endforelse
+                                @else
+                            </ul>
+                            @endif
+                            </ul>
+                            {{-- <div>
+                                @if ($doctors != null)
+                                    {{ $doctors->links() }}
+                                @endif
+                            </div> --}}
+                        </div>
+                        <div class="modal-action">
+                            <label for="searchDoctorMs"wire:click="reset_patient_from_to_id" class="btn btn-sm">Close!</label>
+                        </div>
+                    </div>
+                </div> <!-- For searchDoctorMs -->
 
                 <input type="checkbox" id="editTransferFrom" class="modal-toggle" /> <!-- Edit for transfer from -->
                 <div class="modal">

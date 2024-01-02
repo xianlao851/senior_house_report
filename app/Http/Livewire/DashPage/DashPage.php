@@ -128,7 +128,8 @@ class DashPage extends Component
             $operations = DB::connection('hospital')->table('dbo.herlog')
                 ->select([
                     'tscode'
-                ])->whereIn('tscode', $this->dept_code)->where(DB::raw('CONVERT(date, erdate)'), Carbon::today())->whereYear(DB::raw('CONVERT(date, erdate)'), Carbon::now()->year)->get()->groupBy(function ($data) {
+                ])->whereIn('tscode', $this->dept_code)->where(DB::raw('CONVERT(date, erdate)'), Carbon::today())
+                ->whereYear(DB::raw('CONVERT(date, erdate)'), Carbon::now()->year)->get()->groupBy(function ($data) {
                     return $data->tscode;
                 });
 
@@ -155,14 +156,16 @@ class DashPage extends Component
         } // this year
         if ($this->date_filter == 'this_week') {
             //$patients = Patient::whereBetween('created_at',[Carbon::now()->startOfWeek(),Carbon::now()->endOfWeek()])->get()->groupBy(function($data)
-            $patients = HospitalHerlog::select('erdate')->whereBetween(DB::raw('CONVERT(date, erdate)'), [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->whereYear(DB::raw('CONVERT(date, erdate)'), Carbon::now()->year)->orderBy('erdate', 'asc')->whereYear(DB::raw('CONVERT(date, erdate)'), Carbon::now()->year)->get()->groupBy(function ($data) {
-                return Carbon::parse($data->erdate)->format('M-d');
-            });
+            $patients = HospitalHerlog::select('erdate')->whereBetween(DB::raw('CONVERT(date, erdate)'), [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+                ->whereYear(DB::raw('CONVERT(date, erdate)'), Carbon::now()->year)->orderBy('erdate', 'asc')->get()->groupBy(function ($data) {
+                    return Carbon::parse($data->erdate)->format('M-d');
+                });
 
             $operations = DB::connection('hospital')->table('dbo.herlog')
                 ->select([
                     'tscode'
-                ])->whereIn('tscode', $this->dept_code)->whereBetween(DB::raw('CONVERT(date, erdate)'), [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->whereYear(DB::raw('CONVERT(date, erdate)'), Carbon::now()->year)->get()->groupBy(function ($data) {
+                ])->whereIn('tscode', $this->dept_code)->whereBetween(DB::raw('CONVERT(date, erdate)'), [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+                ->whereYear(DB::raw('CONVERT(date, erdate)'), Carbon::now()->year)->get()->groupBy(function ($data) {
                     return $data->tscode;
                 });
 
@@ -170,9 +173,10 @@ class DashPage extends Component
             $tranfserto = ShoTransferTo::select('created_at')->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->whereYear('created_at', Carbon::now()->year)->count();
         } //this week
         if ($this->date_filter == 'last_week') {
-            $patients = HospitalHerlog::select('erdate')->whereBetween(DB::raw('CONVERT(date, erdate)'), [Carbon::now()->subWeek(), Carbon::now()])->whereYear(DB::raw('CONVERT(date, erdate)'), Carbon::now()->year)->orderBy('erdate', 'asc')->get()->groupBy(function ($data) {
-                return Carbon::parse($data->erdate)->format('M-d');
-            });
+            $patients = HospitalHerlog::select('erdate')->whereBetween(DB::raw('CONVERT(date, erdate)'), [Carbon::now()->subWeek(), Carbon::now()])
+                ->whereYear(DB::raw('CONVERT(date, erdate)'), Carbon::now()->year)->orderBy('erdate', 'asc')->get()->groupBy(function ($data) {
+                    return Carbon::parse($data->erdate)->format('M-d');
+                });
 
             $operations = DB::connection('hospital')->table('dbo.herlog')
                 ->select([

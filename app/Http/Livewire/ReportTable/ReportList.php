@@ -131,7 +131,7 @@ class ReportList extends Component
         $this->get_patients = DB::connection('hospital')->table('dbo.hperson')
             ->join('dbo.herlog', 'dbo.hperson.hpercode', '=', 'dbo.herlog.hpercode')  //joining the
             ->join('dbo.hencdiag', 'dbo.herlog.enccode', '=', 'dbo.hencdiag.enccode')
-            ->select('dbo.hperson.patlast', 'dbo.hperson.patfirst', 'dbo.hperson.hpercode', 'dbo.hencdiag.enccode', 'dbo.hperson.patmiddle')
+            ->select('dbo.hperson.patlast', 'dbo.hperson.patfirst', 'dbo.hperson.hpercode', 'dbo.hencdiag.enccode', 'dbo.hperson.patmiddle', 'dbo.herlog.erdate')
             ->where(function ($query) use ($columns) {
                 foreach ($columns as $column) {
                     $query->orWhere($column, 'like', '%' . $this->search_patient . '%')
@@ -146,7 +146,7 @@ class ReportList extends Component
     public function mount()
     {
         $date = date('Y-m-d H:i:s');
-        $date = date('2023-12-27 17:00:00');
+        $date = date('2023-01-02 17:00:00');
         $this->report_date = $date;
         //$this->getPosition = Auth::user()->employee->position_id;
         $this->getPosition = 18;

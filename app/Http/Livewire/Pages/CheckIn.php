@@ -92,6 +92,8 @@ class CheckIn extends Component
 
     public $getPosition;
     public $dats;
+    public $department_id;
+
     public function updatedSearchPatient()
     {
         //$this->search_patient = '1010454';
@@ -120,22 +122,22 @@ class CheckIn extends Component
     }
     public function updatedSearchDoctor()
     {
+
         $columns = ['emp_id', 'lastname', 'firstname'];
 
         $this->get_doctors = HrisEmployee::select('emp_id', 'lastname', 'firstname')->where(function ($query) use ($columns) {
             foreach ($columns as $column) {
                 $query->orWhere($column, 'LIKE', '%' . $this->search_doctor . '%')
                     ->whereIn('department_id', $this->inc_depts)
-                    ->whereIn('position_id', ['18', '59'])
+                    ->whereIn('position_id', $this->position)
                     ->with('user');
             }
         })->get();
-        //$this->resetPage();
     }
     public function mount()
     {
         $date = date('Y-m-d H:i:s'); //take current date
-        $date = date('2023-12-27 17:00:00');
+        $date = date('2024-01-01 17:00:00');
         $this->report_date = $date;
         //$this->getHospitalIds = Hospital::orderBy('hospital_name', 'asc')->get();
         $this->senior_house_officer = sprintf('%06d', Auth::user()->employee->emp_id); // get user emp_id, details for sho in charge
@@ -184,18 +186,6 @@ class CheckIn extends Component
             'senior_house_officer' => ['required', 'exists:hris.tbl_useraccount,emp_id'], //check the employee if really exist from the employe table
             'report_date' => ['required', 'unique:sho_details,report_date'],  //chech if the senior officer report is allready exist using the date it must be unique
         ]);
-
-        // $date = date('Y-m-d', strtotime($this->report_date));
-        // $dateTime = $date . ' 17:00:00';
-
-        // ShoDetail::updateOrCreate([
-        //     'employee_id' => sprintf('%06d', $this->senior_house_officer),
-        //     'report_date' => $dateTime, //date('Y-m-d'),
-        // ]);
-
-        // $this->resetExcept('report_date', 'current_detail');
-        // $this->alert('success', 'Successfully Created!');
-
         $date = date('Y-m-d', strtotime($this->report_date));
         $dateTime = $date . ' 17:00:00';
         $detail = HrisEmployee::where('emp_id', $this->senior_house_officer)->whereIn('position_id', $this->position)->first();
@@ -211,7 +201,7 @@ class CheckIn extends Component
         }
     }
     /* for adding medical officer and medical specialist detail*/
-    public function check_in_mo_sp($id)
+    public function check_in_mo($id)
     {
         //dd($this->get_doctors);
         $this->doctor_id = sprintf('%06d', $id);
@@ -219,67 +209,60 @@ class CheckIn extends Component
             'current_detail' => ['required'],
             'doctor_id' => ['required', 'exists:hris.tbl_useraccount,emp_id'],
         ]);
-        // position id reference
-        // 18 - Medical Officer III
-        // 59 - Medical Specialist
 
-        $employee = HrisEmployee::where('emp_id', $this->doctor_id)->first(); //fetchin details in employees table, filtered by the doctor id enterd by the senior houese officer
-        if ($employee->position_id == '18' || $employee->position_id == '59') // Checks if the doctor position is Medical Officer III or Medical Specialist
-        {
-            if ($employee->position_id == '18') // Check and accept if the id is 18 for medical officer III
-            {
-                // check if the Medical officer is already on duty
-                //whereBetween(DB::raw('erdate'), [$this->recordDate  . ' 17:00:00', $todate  . ' 07:59:59'])
-                $dat = new DateTime($this->getShoDetail->report_date);
-                $dat->modify('+1 day');
-                $todate = $dat->format('Y-m-d');
-                $this->recordDate = date('Y-m-d', strtotime($this->getShoDetail->report_date));
+        $dat = new DateTime($this->getShoDetail->report_date);
+        $dat->modify('+1 day');
+        $todate = $dat->format('Y-m-d');
+        $this->recordDate = date('Y-m-d', strtotime($this->getShoDetail->report_date));
 
-                $shomoduties = ShoMoDuty::where('employee_id', $this->doctor_id)->whereBetween('report_date', [$this->recordDate  . ' 17:00:00', $todate  . ' 11:59:59'])->first();
-                if ($shomoduties) {
-                    $this->alert('warning', 'Already Added!');
-                    $this->resetExcept('report_date', 'current_detail', 'trasnferfrom', 'trasnsferTo', 'getPosition');
-                } else { // save the medical officer is not yet on duty
-                    ShoMoDuty::create([
-                        'sho_id' => $this->current_detail->id,
-                        'employee_id' => sprintf('%06d', $employee->emp_id),
-                        'department_id' => $employee->department_id,
-                        'report_date' => $this->current_detail->report_date,
-                    ]);
-                    $this->alert('success', 'Successfully added!');
-                    $this->resetExcept('report_date', 'current_detail', 'trasnferfrom', 'trasnsferTo', 'getHospitalIds', 'getPosition');
-                }
-            }
-            //check and accept if the id is 18 for medical Specialist
-            if ($employee->position_id == '59') {
-                // check if the Medical Specialist is already on duty
-                $dat = new DateTime($this->getShoDetail->report_date);
-                $dat->modify('+1 day');
-                $todate = $dat->format('Y-m-d');
-                $this->recordDate = date('Y-m-d', strtotime($this->getShoDetail->report_date));
+        $employee = HrisEmployee::where('emp_id', $this->doctor_id)->first(); //fetchin details in employees table, filtered by the doctor id enterd by the senior houese officer=
 
-                $shomsduties = ShoMsDuty::where('employee_id', $this->doctor_id)->whereBetween('report_date', [$this->recordDate  . ' 17:00:00', $todate  . ' 11:59:59'])->first();
-                if ($shomsduties) {
-                    $this->alert('warning', 'Already Added!');
-                    $this->resetExcept('report_date', 'current_detail', 'trasnferfrom', 'trasnsferTo', 'getPosition');
-                } else {
-                    ShoMsDuty::create([
-                        'sho_id' => $this->current_detail->id,
-                        'employee_id' => sprintf('%06d', $employee->emp_id),
-                        'department_id' => $employee->department_id,
-                        'report_date' => $this->current_detail->report_date,
-                    ]);
-                    $this->alert('success', 'Successfully Added!');
-                    $this->resetExcept('report_date', 'current_detail', 'trasnferfrom', 'trasnsferTo', 'getHospitalIds', 'getPosition');
-                }
-            }
+        $shomoduties = ShoMoDuty::where('employee_id', $this->doctor_id)->whereBetween('report_date', [$this->recordDate  . ' 17:00:00', $todate  . ' 11:59:59'])->first();
+        if ($shomoduties) {
+            $this->alert('warning', 'Already Added!');
+            $this->resetExcept('report_date', 'current_detail', 'trasnferfrom', 'trasnsferTo', 'getHospitalIds', 'getPosition', 'department_id');
+        } else { // save the medical officer is not yet on duty
+            ShoMoDuty::create([
+                'sho_id' => $this->current_detail->id,
+                'employee_id' => sprintf('%06d', $employee->emp_id),
+                'department_id' =>  $this->department_id,
+                'report_date' => $this->current_detail->report_date,
+            ]);
+            $this->alert('success', 'Successfully added!');
+            $this->resetExcept('report_date', 'current_detail', 'trasnferfrom', 'trasnsferTo', 'getHospitalIds', 'getPosition', 'department_id');
         }
-        //If the doctor Id is not medical officer III or Medical specialist
-        else {
-            $this->alert('warning', 'Details invalid!');
-            $this->resetExcept('report_date', 'current_detail', 'trasnferfrom', 'trasnsferTo', 'getHospitalIds');
+    }
+
+    public function check_in_ms($id)
+    {
+        $this->doctor_id = sprintf('%06d', $id);
+        $this->validate([
+            'current_detail' => ['required'],
+            'doctor_id' => ['required', 'exists:hris.tbl_useraccount,emp_id'],
+        ]);
+
+        $employee = HrisEmployee::where('emp_id', $this->doctor_id)->first();
+
+        // check if the Medical Specialist is already on duty
+        $dat = new DateTime($this->getShoDetail->report_date);
+        $dat->modify('+1 day');
+        $todate = $dat->format('Y-m-d');
+        $this->recordDate = date('Y-m-d', strtotime($this->getShoDetail->report_date));
+
+        $shomsduties = ShoMsDuty::where('employee_id', $this->doctor_id)->whereBetween('report_date', [$this->recordDate  . ' 17:00:00', $todate  . ' 11:59:59'])->first();
+        if ($shomsduties) {
+            $this->alert('warning', 'Already Added!');
+            $this->resetExcept('report_date', 'current_detail', 'trasnferfrom', 'trasnsferTo', 'getHospitalIds', 'getPosition', 'department_id');
+        } else {
+            ShoMsDuty::create([
+                'sho_id' => $this->current_detail->id,
+                'employee_id' => sprintf('%06d', $employee->emp_id),
+                'department_id' =>  $this->department_id,
+                'report_date' => $this->current_detail->report_date,
+            ]);
+            $this->alert('success', 'Successfully Added!');
+            $this->resetExcept('report_date', 'current_detail', 'trasnferfrom', 'trasnsferTo', 'getHospitalIds', 'getPosition', 'department_id');
         }
-        $this->resetExcept('report_date', 'current_detail', 'trasnferfrom', 'trasnsferTo', 'getHospitalIds', 'getPosition');
     }
     // For searching patients
     public function get_patientIdFrom($id)
@@ -404,23 +387,10 @@ class CheckIn extends Component
         }
     }
 
-    // public function searchDoctor()
-    // {
-    //     //dd($this->search_doctor);
-    //     $this->validate([
-    //         'get_option' => ['required'],
-    //         'search_doctor' => ['required'],
-    //     ]);
-    //     //[13, 15, 12, 8, 14, 87, 9, 7, 65];
-    //     $get_doctor = HrisEmployee::where($this->get_option, $this->search_doctor)
-    //         ->whereIn('position_id', ['18', '59'])
-    //         ->whereIn('department_id', $this->inc_depts)->with('user')->get();
-    //     if ($get_doctor) {
-    //         $this->doctors = $get_doctor;
-    //     } else {
-    //         $this->resetExcept('report_date', 'current_detail', 'trasnferfrom', 'trasnsferTo', 'getHospitalIds');
-    //     }
-    // }
+    public function getDepartmenttId($getDeptID)
+    {
+        $this->department_id = $getDeptID;
+    }
 
     // public function searchpatient()
     // {

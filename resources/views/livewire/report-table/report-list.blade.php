@@ -476,12 +476,6 @@
                                 class="w-[450px] input input-bordered join-item focus:border-green-700 focus:ring-green-700"
                                 type="text" wire:model.lazy="search_patient" placeholder="Search" />
                         </div>
-                        {{-- <select class="select select-bordered join-item" wire:model='get_option'>
-                                <option>Filter</option>
-                                <option value="dbo.hperson.hpercode">Hospital No.</option>
-                                <option value="dbo.hperson.patlast">Last name</option>
-                                <option value="dbo.hperson.patfirst">First name</option>
-                            </select> --}}
                         <div class="indicator">
                             <button class="w-20 text-white bg-green-700 btn join-item">Search</button>
                             {{-- wire:click='searchpatient'>Search</button> --}}
@@ -501,6 +495,7 @@
                                         @if ($pat->patmiddle != null or $pat->patmiddle == '')
                                             {{ $pat->patmiddle }}
                                         @endif
+                                        {{ $pat->erdate }}
                                     </li>
                                 @empty
                                     <div class="mx-1">No records!</div>

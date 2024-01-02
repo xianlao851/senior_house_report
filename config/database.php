@@ -66,7 +66,8 @@ return [
         'hris' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
-            'host' => '192.168.1.17',
+            //'host' => '192.168.1.17',
+            'host' => env('DB_HOST', '127.0.0.1'),
             'port' => '3306',
             'database' => 'hris',
             'username' => 'root',
@@ -117,6 +118,7 @@ return [
             'driver' => 'sqlsrv',
             'url' => env('DATABASE_URL'),
             'host' => '192.168.1.101',
+            //'host' => '192.168.1.231',
             'port' => '1433',
             'database' => 'hospital',
             'username' => 'sa',
