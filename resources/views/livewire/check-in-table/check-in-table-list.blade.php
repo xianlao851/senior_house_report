@@ -20,11 +20,13 @@
             <tbody>
                 @foreach ($shodetails as $shodetail)
                     <tr class="hover">
-                        <td> <a href="{{ route('viewshoreports', ['id' => $shodetail->id]) }}">
-                                {{ \Carbon\Carbon::parse($shodetail->report_date)->format('M-j-Y') }} </a>
+                        <td>
+                            {{-- <a href="{{ route('viewshoreports', ['id' => $shodetail->id]) }}"> --}}
+                            {{ \Carbon\Carbon::parse($shodetail->report_date)->format('M-j-Y') }} </a>
                         </td>
-                        <td><a href="{{ route('viewshoreports', ['id' => $shodetail->id]) }}">
-                                {{ $shodetail->employee->fullname() }} </a>
+                        <td>
+                            {{-- <a href="{{ route('viewshoreports', ['id' => $shodetail->id]) }}"> --}}
+                            {{ $shodetail->employee->fullname() }} </a>
                         </td>
                         {{-- <td>
                             <a href="{{ route('viewshoreports', ['id' => $shodetail->id]) }}"

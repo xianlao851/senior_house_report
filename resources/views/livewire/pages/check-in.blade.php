@@ -5,6 +5,20 @@
     </h3>
 </x-slot>
 <div class="p-4 mt-4">
+    {{-- @if ($errors->first())
+        <div class="max-w-6xl mx-auto mb-2">
+            <div class="shadow-lg alert alert-error">
+                <div>
+                    <button wire:click="$emit('refresh')"><svg xmlns="http://www.w3.org/2000/svg"
+                            class="flex-shrink-0 w-6 h-6 stroke-current" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg></button>
+                    <i class="mr-2 las la-lg la-exclamation-triangle"></i> {{ $errors->first() }}
+                </div>
+            </div>
+        </div>
+    @endif --}}
     <div class="relative flex flex-col max-w-6xl p-3 mx-auto bg-white rounded">
         <div class="absolute right-0 top-8">
             <div class="grid grid-cols-2 join">
@@ -151,7 +165,6 @@
                                                 class="bg-green-200 las la-plus la-lg btn btn-xs"></i></label>
                                     @endif
                                 @endif
-
                             </td>
                         </tr>
                     @endforeach
@@ -332,7 +345,7 @@
                                                     @if ($pat->patmiddle != null or $pat->patmiddle == '')
                                                         {{ $pat->patmiddle }},
                                                     @endif
-                                                    {{ $pat->erdate }}
+                                                    {{-- {{ $pat->erdate }} --}}
                                                 </li>
                                             @empty
                                                 <div class="mx-1">No records!</div>
@@ -365,7 +378,12 @@
                                 </div>
                                 <div class="py-2">
                                     <label for="reason"
-                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Reason</label>
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Reason
+                                        @error('reason')
+                                            <span class="text-red-500 error">{{ $message }}</span>
+                                        @enderror
+                                    </label>
+
                                     <textarea type="text" wire:model="reason" id="reason "
                                         class="block w-full text-sm text-gray-900 border rounded-md bg-gray-50 focus:border-green-700 focus:ring-green-700"
                                         placeholder="Reason" required> </textarea>
@@ -373,7 +391,11 @@
                                 <div class="py-2">
                                     <label for="facility"
                                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Transfering
-                                        Facility</label>
+                                        Facility @error('facility')
+                                            <span class="text-red-500 error">{{ $message }}</span>
+                                        @enderror
+                                    </label>
+
                                     <input wire:model="facility" id="facility" required
                                         class="block w-full text-sm text-gray-900 border rounded-md bg-gray-50 focus:border-green-700 focus:ring-green-700"
                                         placeholder="Transfering Facility">
@@ -462,7 +484,11 @@
                                 </div>
                                 <div class="py-2">
                                     <label for="reason"
-                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Reason</label>
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Reason
+                                        @error('reason')
+                                            <span class="text-red-500 error">{{ $message }}</span>
+                                        @enderror
+                                    </label>
                                     <textarea type="text" wire:model="reason" id="reason "
                                         class="block w-full text-sm text-gray-900 border rounded-md focus:border-green-700 focus:ring-green-700 bg-gray-50"
                                         placeholder="Reason" required> </textarea>
@@ -470,7 +496,10 @@
                                 <div class="py-2">
                                     <label for="facility"
                                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Transfering
-                                        Facility</label>
+                                        Facility @error('facility')
+                                            <span class="text-red-500 error">{{ $message }}</span>
+                                        @enderror
+                                    </label>
                                     <input wire:model="facility" id="facility" required
                                         class="block w-full text-sm text-gray-900 border rounded-md bg-gray-50 focus:border-green-700 focus:ring-green-700">
                                     </input>

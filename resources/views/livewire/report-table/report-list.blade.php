@@ -5,29 +5,8 @@
     </div>
 </x-slot>
 <div class="p-1">
-    {{-- <div class="relative max-w-5xl p-4 mx-auto">
-        <div class="absolute top-0 right-0">
-            <div class="join">
-                <div>
-                    <div>
-                        <input class="input input-bordered join-item" wire:model='get_emp_id' placeholder="Search" />
-                    </div>
-                </div>
-                 <select class="select select-bordered join-item">
-                    <option disabled selected>Filter</option>
-                    <option>Sci-fi</option>
-                    <option>Drama</option>
-                    <option>Action</option>
-                </select>
-                <div class="indicator">
-                    <span class="indicator-item badge badge-secondary">new</span>
-                    <button class="btn join-item" wire:click='clickMe'>Search</button>
-                </div>
-            </div>
-        </div>
-    </div> --}}
     <div class="max-w-6xl p-4 mx-auto mt-4">
-        @if ($errors->first())
+        {{-- @if ($errors->first())
             <div class="max-w-6xl mx-auto mb-2">
                 <div class="shadow-lg alert alert-error">
                     <div>
@@ -40,7 +19,7 @@
                     </div>
                 </div>
             </div>
-        @endif
+        @endif --}}
         <div class="w-full p-3 bg-white rounded-md">
             <div class="relative py-2 font-medium uppercase">
                 <span>
@@ -97,10 +76,6 @@
                                                 /&nbsp;{{ $var = (int) $operation->getAge->patage }}
                                                 / {{ $operation->patient->patsex }}
                                             </label>
-                                            {{-- <div wire:loading
-                                                wire:target="get_patient_id({{ $operation->patient_id }})">
-                                                Loading data ......
-                                            </div> --}}
                                         </td>
                                         <td class="text-xs border ">
                                             <label>
@@ -316,8 +291,8 @@
                             <span class="col-span-2">NO ABSCONDING PATIENT CASE REPORTED?</span>
                             <div class="">
                                 <label for="" class="">YES</label>
-                                <input class="" type="radio"
-                                    wire:model='chk_absconding_patient_case_reported' value='yes' />
+                                <input class="" type="radio" wire:model='chk_absconding_patient_case_reported'
+                                    value='yes' />
                                 <label for="" class="">NO</label>
                                 <input class="" type="radio"
                                     wire:model='chk_absconding_patient_case_reported' value='no' />
@@ -443,7 +418,11 @@
                         </h3>
                         <div class="">
                             <label for="operation"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                @error('operation_done')
+                                    <span class="text-red-500 error">{{ $message }}</span>
+                                @enderror
+                            </label>
                             <textarea type="text" wire:model="operation_done" id="operation "
                                 class="block w-full text-sm text-gray-900 border rounded-md bg-gray-50 focus:border-green-700 focus:ring-green-700"
                                 placeholder="OPERATION" required> </textarea>
@@ -495,7 +474,7 @@
                                         @if ($pat->patmiddle != null or $pat->patmiddle == '')
                                             {{ $pat->patmiddle }}
                                         @endif
-                                        {{ $pat->erdate }}
+                                        {{-- {{ $pat->erdate }} --}}
                                     </li>
                                 @empty
                                     <div class="mx-1">No records!</div>
@@ -520,7 +499,10 @@
                         <div class="">
                             <label for="noi"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nature of
-                                Incident</label>
+                                Incident @error('nature_of_incident')
+                                    <span class="text-red-500 error">{{ $message }}</span>
+                                @enderror
+                            </label>
                             <input wire:model="nature_of_incident" type="text" id="noi"
                                 class="block w-full text-sm text-gray-900 border rounded-md bg-gray-50 focus:border-green-700 focus:ring-green-700"
                                 placeholder="NOI" required>
@@ -528,7 +510,10 @@
                         <div class="">
                             <label for="poi"
                                 class="mb-2 text-sm font-medium text-gray-900 blo ck dark:text-white">Place of
-                                Incident</label>
+                                Incident @error('place_of_incident')
+                                    <span class="text-red-500 error">{{ $message }}</span>
+                                @enderror
+                            </label>
                             <input wire:model="place_of_incident" type="text" id="poi"
                                 class="block w-full text-sm text-gray-900 border rounded-md bg-gray-50 focus:border-green-700 focus:ring-green-700"
                                 placeholder="POI" required>
@@ -536,16 +521,21 @@
                         <div class="">
                             <label for="toi"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Time of
-                                Incident</label>
+                                Incident @error('time_of_incident')
+                                    <span class="text-red-500 error">{{ $message }}</span>
+                                @enderror
+                            </label>
                             <input wire:model="time_of_incident" type="time" id="toi"
                                 class="w-full text-sm text-gray-900 border rounded-md iblock bg-gray-50 focus:border-green-700 focus:ring-green-700"
                                 placeholder="NOI" required>
                         </div>
                         <div class="">
                             <label for="doi"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white focus:border-green-700 focus:ring-green-700">Date
-                                of
-                                Incident</label>
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white focus:border-green-700 focus:ring-green-700">Dateof
+                                Incident @error('date_of_incident')
+                                    <span class="text-red-500 error">{{ $message }}</span>
+                                @enderror
+                            </label>
                             <input wire:model="date_of_incident" type="date" id="doi"
                                 class="block w-full text-sm text-gray-900 border rounded-md bg-gray-50 focus:border-green-700 focus:ring-green-700"
                                 placeholder="NOI" required>

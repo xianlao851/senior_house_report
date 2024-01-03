@@ -146,17 +146,17 @@ class ReportList extends Component
     public function mount()
     {
         $date = date('Y-m-d H:i:s');
-        $date = date('2023-01-02 17:00:00');
+        //$date = date('2023-01-02 17:00:00');
         $this->report_date = $date;
-        //$this->getPosition = Auth::user()->employee->position_id;
-        $this->getPosition = 18;
+        $this->getPosition = Auth::user()->employee->position_id;
+        //$this->getPosition = 18;
     }
     public function render()
     {
         //$this->get_sho_detail = ShoDetail::where('report_date', $this->report_date)->first();
         $this->get_sho_detail = ShoDetail::all()->last();
         $cur_time = Carbon::parse(now())->format('H');
-        $cur_time = 17;
+        //$cur_time = 17;
         $this->getCurrentDateTime = Carbon::createFromFormat('Y-m-d H:s:i', $this->report_date);
         $this->getDiffHours = $this->getCurrentDateTime->diffInHours($this->get_sho_detail->report_date);
 
@@ -175,8 +175,6 @@ class ReportList extends Component
         $this->recordDate = date('Y-m-d', strtotime($this->get_sho_detail->report_date));
         $this->currentDate = date('Y-m-d', strtotime($this->report_date));
         $this->getTime = $cur_time;
-
-        $this->recordDate = date('Y-m-d', strtotime('2023-12-26'));
 
         return view('livewire.report-table.report-list', [
             // 'patients'=> $patients,
@@ -230,6 +228,11 @@ class ReportList extends Component
             'place_of_incident' => ['required'],
             'date_of_incident' => ['required'],
 
+        ], [
+            'nature_of_incident.required' => '*',
+            'time_of_incident.required' => '*',
+            'place_of_incident.required' => '*',
+            'date_of_incident.required' => '*'
         ]);
 
         ShoSignificantEvent::create([
@@ -272,6 +275,8 @@ class ReportList extends Component
             'report_date' => ['required'],
             'department' => ['required'],
 
+        ], [
+            'operation_done.required' => 'This is a required field...'
         ]);
         Operation::create([
             'patient_id' => $this->patient_id,

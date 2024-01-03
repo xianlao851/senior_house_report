@@ -137,19 +137,19 @@ class CheckIn extends Component
     public function mount()
     {
         $date = date('Y-m-d H:i:s'); //take current date
-        $date = date('2024-01-01 17:00:00');
+        //$date = date('2024-01-02 17:00:00');
         $this->report_date = $date;
         //$this->getHospitalIds = Hospital::orderBy('hospital_name', 'asc')->get();
         $this->senior_house_officer = sprintf('%06d', Auth::user()->employee->emp_id); // get user emp_id, details for sho in charge
-        //$this->getPosition = Auth::user()->employee->position_id;
-        $this->getPosition = 18;
+        $this->getPosition = Auth::user()->employee->position_id;
+        //$this->getPosition = 18;
     }
 
     public function render()
     {
 
         $cur_time = Carbon::parse(now())->format('H');
-        $cur_time = 17;
+        //$cur_time = 17;
         //dd($cur_time);
         $detail = ShoDetail::all()->last();
         $this->getShoDetail = $detail;
@@ -166,7 +166,6 @@ class CheckIn extends Component
 
         $this->getRecordDate = $this->recordDate;
 
-        $this->recordDate = date('Y-m-d', strtotime('2023-12-26'));
         return view('livewire.pages.check-in', [
             'departments' =>  $departments ?? null,
             'detail' =>   $detail ?? null,
@@ -300,12 +299,18 @@ class CheckIn extends Component
 
     public function saveShoTransferFrom()    // Save transfer from info
     {
-        $this->validate([
-            'reason' => ['required'],
-            'facility' => ['required'],
-            'diagnosis' => ['required'],
+        $this->validate(
+            [
+                'reason' => ['required'],
+                'facility' => ['required'],
+                'diagnosis' => ['required'],
 
-        ]);
+            ],
+            [
+                'reason.required' => '*',
+                'facility.required' => '*',
+            ]
+        );
         $getTransferFrom = shoTransferFrom::where('patient_id', $this->patientFromId)->where('report_date', $this->getShoDetail->report_date)->first();
         //$getTransferTo = shoTransferTo::where('patient_id', $this->patientFromId)->where('report_date', $this->getShoDetail->report_date)->first();
 
@@ -361,11 +366,18 @@ class CheckIn extends Component
 
     public function saveShoTransferTo()     // Save transfer from info
     {
-        $this->validate([
-            'facility' => ['required'],
-            'diagnosis' => ['required'],
-            'reason' => ['required'],
-        ]);
+        $this->validate(
+            [
+                'reason' => ['required'],
+                'facility' => ['required'],
+                'diagnosis' => ['required'],
+
+            ],
+            [
+                'reason.required' => '*',
+                'facility.required' => '*',
+            ]
+        );
         $getTransferTo = shoTransferTo::where('patient_id', $this->patienToId)->where('report_date', $this->getShoDetail->report_date)->first();
 
 

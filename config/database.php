@@ -117,8 +117,8 @@ return [
         'hospital' => [
             'driver' => 'sqlsrv',
             'url' => env('DATABASE_URL'),
-            'host' => '192.168.1.101',
-            //'host' => '192.168.1.231',
+            //'host' => '192.168.1.101',
+            'host' => '192.168.1.231',
             'port' => '1433',
             'database' => 'hospital',
             'username' => 'sa',
