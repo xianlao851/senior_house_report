@@ -1,0 +1,72 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-dae84d67.css",
+    "isEntry": true,
+    "src": "resources/css/app.css"
+  },
+  "resources/css/line-awesome/fonts/la-brands-400.eot": {
+    "file": "assets/la-brands-400-c0e32387.eot",
+    "src": "resources/css/line-awesome/fonts/la-brands-400.eot"
+  },
+  "resources/css/line-awesome/fonts/la-brands-400.svg": {
+    "file": "assets/la-brands-400-4da18191.svg",
+    "src": "resources/css/line-awesome/fonts/la-brands-400.svg"
+  },
+  "resources/css/line-awesome/fonts/la-brands-400.ttf": {
+    "file": "assets/la-brands-400-fbc98702.ttf",
+    "src": "resources/css/line-awesome/fonts/la-brands-400.ttf"
+  },
+  "resources/css/line-awesome/fonts/la-brands-400.woff": {
+    "file": "assets/la-brands-400-14c63377.woff",
+    "src": "resources/css/line-awesome/fonts/la-brands-400.woff"
+  },
+  "resources/css/line-awesome/fonts/la-brands-400.woff2": {
+    "file": "assets/la-brands-400-ff70c9bc.woff2",
+    "src": "resources/css/line-awesome/fonts/la-brands-400.woff2"
+  },
+  "resources/css/line-awesome/fonts/la-regular-400.eot": {
+    "file": "assets/la-regular-400-7dc456f0.eot",
+    "src": "resources/css/line-awesome/fonts/la-regular-400.eot"
+  },
+  "resources/css/line-awesome/fonts/la-regular-400.svg": {
+    "file": "assets/la-regular-400-884ce19c.svg",
+    "src": "resources/css/line-awesome/fonts/la-regular-400.svg"
+  },
+  "resources/css/line-awesome/fonts/la-regular-400.ttf": {
+    "file": "assets/la-regular-400-4b6ab8d0.ttf",
+    "src": "resources/css/line-awesome/fonts/la-regular-400.ttf"
+  },
+  "resources/css/line-awesome/fonts/la-regular-400.woff": {
+    "file": "assets/la-regular-400-7711fabc.woff",
+    "src": "resources/css/line-awesome/fonts/la-regular-400.woff"
+  },
+  "resources/css/line-awesome/fonts/la-regular-400.woff2": {
+    "file": "assets/la-regular-400-51ca2c00.woff2",
+    "src": "resources/css/line-awesome/fonts/la-regular-400.woff2"
+  },
+  "resources/css/line-awesome/fonts/la-solid-900.eot": {
+    "file": "assets/la-solid-900-8a57f8a9.eot",
+    "src": "resources/css/line-awesome/fonts/la-solid-900.eot"
+  },
+  "resources/css/line-awesome/fonts/la-solid-900.svg": {
+    "file": "assets/la-solid-900-0ce0cc40.svg",
+    "src": "resources/css/line-awesome/fonts/la-solid-900.svg"
+  },
+  "resources/css/line-awesome/fonts/la-solid-900.ttf": {
+    "file": "assets/la-solid-900-07ce3559.ttf",
+    "src": "resources/css/line-awesome/fonts/la-solid-900.ttf"
+  },
+  "resources/css/line-awesome/fonts/la-solid-900.woff": {
+    "file": "assets/la-solid-900-a0d21b2a.woff",
+    "src": "resources/css/line-awesome/fonts/la-solid-900.woff"
+  },
+  "resources/css/line-awesome/fonts/la-solid-900.woff2": {
+    "file": "assets/la-solid-900-10a68e01.woff2",
+    "src": "resources/css/line-awesome/fonts/la-solid-900.woff2"
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-99503fb2.js",
+    "isEntry": true,
+    "src": "resources/js/app.js"
+  }
+}
