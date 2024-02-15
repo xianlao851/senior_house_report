@@ -84,8 +84,8 @@ class DashPage extends Component
         'OPHTH',
         'ENT',
         'FAMED',
-        'ORTHO'
-        // 'OB',
+        'ORTHO',
+        'OB',
     ];
     public $get_date;
     public $date_filter;
@@ -148,15 +148,15 @@ class DashPage extends Component
         $this->dateFilter = $this->date_filter;
 
         if ($this->date_filter == 'today') {
-            $patients = HospitalHerlog::select('erdate')->whereDate(DB::raw('CONVERT(date, erdate)'), Carbon::today())->whereYear(DB::raw('CONVERT(date, erdate)'), Carbon::now()->year)->orderBy('erdate', 'asc')->get()->groupBy(function ($data) {
-                return Carbon::parse($data->erdate)->format('M-d');
+            $patients = HospitalHerlog::select('erdate')->whereDate(DB::raw('CONVERT(date, erdate)'), Carbon::today())->whereYear(DB::raw('CONVERT(date, erdate)'), Carbon::now()->year)->whereNotNull('tscode')->orderBy('erdate', 'asc')->get()->groupBy(function ($data) {
+                return Carbon::parse($data->erdate)->format('H');
             });
 
             $operations = DB::connection('hospital')->table('dbo.herlog')
                 ->select([
                     'tscode'
-                ])->whereIn('tscode', $this->dept_code)->where(DB::raw('CONVERT(date, erdate)'), Carbon::today())
-                ->whereYear(DB::raw('CONVERT(date, erdate)'), Carbon::now()->year)->orderBy('tscode', 'asc')->get()->groupBy(function ($data) {
+                ])->whereIn('tscode', $this->dept_code)->where(DB::raw('CONVERT(date, erdate)'), Carbon::today())->get()->groupBy(function ($data) {
+                    //->whereYear(DB::raw('CONVERT(date, erdate)'), Carbon::now()->year)->orderBy('tscode', 'asc')->get()->groupBy(function ($data) {
                     return $data->tscode;
                 });
 
@@ -316,14 +316,16 @@ class DashPage extends Component
             $tranfserto = ShoTransferTo::select('created_at')->whereMonth('created_at', Carbon::now()->subMonth()->month)->whereYear('created_at', Carbon::now()->year)->count();
         } // last month
         if ($this->date_filter == 'yesterday') {
-            $patients = HospitalHerlog::select('erdate')->wheredate('erdate', Carbon::yesterday())->orderBy('erdate', 'asc')->whereYear(DB::raw('CONVERT(date, erdate)'), Carbon::now()->year)->get()->groupBy(function ($data) {
-                return Carbon::parse($data->erdate)->format('M-d');
-            });
+            $patients = HospitalHerlog::select('erdate')->wheredate(DB::raw('CONVERT(date, erdate)'), Carbon::yesterday())
+                ->orderBy('erdate', 'asc')->whereNotNull('tscode')->get()->groupBy(function ($data) {
+                    return Carbon::parse($data->erdate)->format('H');
+                });
 
             $operations = DB::connection('hospital')->table('dbo.herlog')
                 ->select([
                     'tscode'
-                ])->whereIn('tscode', $this->dept_code)->wheredate(DB::raw('CONVERT(date, erdate)'), Carbon::yesterday())->whereYear(DB::raw('CONVERT(date, erdate)'), Carbon::now()->year)->orderBy('tscode', 'asc')->get()->groupBy(function ($data) {
+                ])->whereIn('tscode', $this->dept_code)->whereNotNull('tscode')->wheredate(DB::raw('CONVERT(date, erdate)'), Carbon::yesterday())
+                ->orderBy('tscode', 'asc')->get()->groupBy(function ($data) {
                     return $data->tscode;
                 });
 
