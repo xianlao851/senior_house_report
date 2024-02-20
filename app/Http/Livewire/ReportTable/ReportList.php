@@ -149,14 +149,14 @@ class ReportList extends Component
         //$date = date('2023-01-02 17:00:00');
         $this->report_date = $date;
         $this->getPosition = Auth::user()->employee->position_id;
-        //$this->getPosition = 18;
+        $this->getPosition = 18;
     }
     public function render()
     {
         //$this->get_sho_detail = ShoDetail::where('report_date', $this->report_date)->first();
         $this->get_sho_detail = ShoDetail::all()->last();
         $cur_time = Carbon::parse(now())->format('H');
-        //$cur_time = 17;
+        $cur_time = 17;
         $this->getCurrentDateTime = Carbon::createFromFormat('Y-m-d H:s:i', $this->report_date);
         $this->getDiffHours = $this->getCurrentDateTime->diffInHours($this->get_sho_detail->report_date);
 

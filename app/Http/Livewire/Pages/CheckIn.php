@@ -142,14 +142,14 @@ class CheckIn extends Component
         //$this->getHospitalIds = Hospital::orderBy('hospital_name', 'asc')->get();
         $this->senior_house_officer = sprintf('%06d', Auth::user()->employee->emp_id); // get user emp_id, details for sho in charge
         $this->getPosition = Auth::user()->employee->position_id;
-        //$this->getPosition = 18;
+        $this->getPosition = 18;
     }
 
     public function render()
     {
 
         $cur_time = Carbon::parse(now())->format('H');
-        //$cur_time = 17;
+        $cur_time = 17;
         //dd($cur_time);
         $detail = ShoDetail::all()->last();
         $this->getShoDetail = $detail;
@@ -187,7 +187,8 @@ class CheckIn extends Component
         ]);
         $date = date('Y-m-d', strtotime($this->report_date));
         $dateTime = $date . ' 17:00:00';
-        $detail = HrisEmployee::where('emp_id', $this->senior_house_officer)->whereIn('position_id', $this->position)->first();
+        //$detail = HrisEmployee::where('emp_id', $this->senior_house_officer)->whereIn('position_id', $this->position)->first();
+        $detail = HrisEmployee::where('emp_id', $this->senior_house_officer)->first();
         if ($detail) {
 
             ShoDetail::updateOrCreate([

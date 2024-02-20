@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('operations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('patient_id');
-            $table->string('sho_id');
+            $table->string('patient_id', 150);
+            $table->foreignId('sho_id');
             $table->text('operation_done');
-            $table->foreignId('department', 255);
-            $table->date('report_date');
+            $table->string('department', 50);
+            $table->timestamp('report_date');
             $table->timestamps();
         });
     }

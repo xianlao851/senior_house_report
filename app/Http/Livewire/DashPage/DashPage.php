@@ -155,7 +155,7 @@ class DashPage extends Component
             $operations = DB::connection('hospital')->table('dbo.herlog')
                 ->select([
                     'tscode'
-                ])->whereIn('tscode', $this->dept_code)->where(DB::raw('CONVERT(date, erdate)'), Carbon::today())->get()->groupBy(function ($data) {
+                ])->whereIn('tscode', $this->dept_code)->where(DB::raw('CONVERT(date, erdate)'), Carbon::today())->whereNotNull('tscode')->orderBy('tscode', 'asc')->get()->groupBy(function ($data) {
                     //->whereYear(DB::raw('CONVERT(date, erdate)'), Carbon::now()->year)->orderBy('tscode', 'asc')->get()->groupBy(function ($data) {
                     return $data->tscode;
                 });
@@ -283,7 +283,7 @@ class DashPage extends Component
             //     $this->departments[] = $department;
             //     $this->deptCount[] = count($values);
             // }
-            $this->dispatchBrowserEvent('thisloadChart');
+            //$this->dispatchBrowserEvent('thisloadChart');
 
             $tranfserfrom = ShoTransferFrom::select('created_at')->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->count();
             $tranfserto = ShoTransferTo::select('created_at')->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->count();

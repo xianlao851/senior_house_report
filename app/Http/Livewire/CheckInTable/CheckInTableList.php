@@ -17,7 +17,7 @@ class CheckInTableList extends Component
     public function mount()
     {
         $this->getPosition = Auth::user()->employee->position_id;
-        //$this->getPosition = 18;
+        $this->getPosition = 18;
     }
     public function render()
     {

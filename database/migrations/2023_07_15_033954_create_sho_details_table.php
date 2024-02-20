@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('sho_details', function (Blueprint $table) {
             $table->id();
-            $table->string('emp_id');
-            $table->date('report_date')->unique();
+            $table->string('emp_id', 100);
+            $table->timestamp('report_date');
             $table->timestamps();
         });
     }

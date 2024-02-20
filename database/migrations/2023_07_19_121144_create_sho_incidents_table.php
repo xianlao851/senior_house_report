@@ -13,9 +13,13 @@ return new class extends Migration
     {
         Schema::create('sho_incidents', function (Blueprint $table) {
             $table->id();
-            $table->text('incident_description');
+            $table->bigInteger('incident_case_reported');
+            $table->bigInteger('absconding_patient_case_reported');
+            $table->bigInteger('doa_patient_case_reported');
+            $table->bigInteger('other_security_function');
+            $table->text('trauma_patient_case_reported');
             $table->foreignId('sho_id');
-            $table->date('report_date');
+            $table->timestamp('report_date');
             $table->timestamps();
         });
     }

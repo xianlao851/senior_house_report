@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('sho_mo_duties', function (Blueprint $table) {
             $table->id();
             $table->foreignId('sho_id');
-            $table->string('emp_id');
+            $table->string('emp_id', 100);
             $table->foreignId('department_id');
-            $table->date('report_date');
+            $table->timestamp('report_date');
             $table->timestamps();
         });
     }

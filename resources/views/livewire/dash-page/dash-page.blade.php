@@ -65,7 +65,7 @@
                             <livewire:livewire-pie-chart key="{{ $pieChartModel->reactiveKey() }}" :pie-chart-model="$pieChartModel" />
                         </div>
                         {{-- <div class="mt-4 join-item">
-                             @if ($date_filter == 'this_month')
+                            @if ($date_filter == 'this_month')
                                 <div id="this_month_chart" class="w-full h-full "></div>
                             @else
                                 <div id="chart" class="w-full h-full "></div>
@@ -100,9 +100,9 @@
                 getname = {!! json_encode($departments) !!};
                 catchColors = {!! json_encode($getColors) !!};
 
-                console.log(getcount);
-                console.log(getname);
-                console.log(catchColors);
+                //console.log(getcount);
+                //console.log(getname);
+                //console.log(catchColors);
 
                 var options = {
                     series: getcount,
@@ -157,7 +157,7 @@
                 };
 
                 var chart = new ApexCharts(document.querySelector("#this_month_chart"), options);
-                chart.render();
+                //chart.render();
             };
 
             window.addEventListener('loadChart', event => {
@@ -166,9 +166,9 @@
                 var getname = event.detail.deptname;
                 var catchColors = event.detail.getcolors;
 
-                console.log(getcount);
-                console.log(getname);
-                console.log(catchColors);
+                //console.log(getcount);
+                //console.log(getname);
+                //console.log(catchColors);
 
                 var options = {
                     //series: [getcount[0], getcount[1], getcount[2], getcount[3], getcount[4], getcount[5], getcount[
